@@ -1,0 +1,24 @@
+{
+    "num_iterations": 200,
+    "dataset_name": "coco",
+    "conf_threshold_1": 0.5,
+    "conf_threshold_2": 0.5,
+    "hf_model_name_1": "PekingU/rtdetr_r50vd",
+    "hf_model_name_2": "PekingU/rtdetr_r50vd",
+    "num_queries_1": 50,
+    "num_queries_2": 50,
+    "test_size": 100,
+    "adv_patch_shape": null,
+    "adv_patch_placement": "center",
+    "target_labels": [
+        [2], 
+        [2]
+    ],
+    "learning_rate": 1.5,
+    "log": true,
+    "budget": {
+        "l1": null,
+        "l2": null,
+        "linf": 0.08
+    }
+}
