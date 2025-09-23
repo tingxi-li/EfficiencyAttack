@@ -19,8 +19,8 @@ from transformers import RTDetrForObjectDetection, RTDetrImageProcessor
 class Pipeline(BasePipeline):
     def __init__(self, config, device=None):
         self.device = device
-        self.config = config
         
+        self.config = config
         self.num_iterations = config["num_iterations"]
         self.dataset_name = config["dataset_name"]
         self.conf_threshold_1 = config["conf_threshold_1"]
@@ -81,7 +81,7 @@ class Pipeline(BasePipeline):
             image = example["image"].convert("RGB")
 
             image_tensor = self.processor_1(images=image, return_tensors="pt")["pixel_values"].to(self.device)
-            self.bx = torch.zeros_like(image_tensor).requires_grad_(True).to(self.device)
+            self.bx = torch.rand(image_tensor.shape).requires_grad_(True).to(self.device) * self.budget
             self.mask =  self.get_mask(image_tensor.shape).to(self.device)
 
             self.log_dict[image_id] = []
@@ -89,8 +89,10 @@ class Pipeline(BasePipeline):
                 model_1_outputs = self.model_1(image_tensor + self.bx * self.mask, output_hidden_states=True)
                 probs = F.sigmoid(model_1_outputs.logits)
                 
-                cls_loss_1  = U.calc_cls_loss(probs, self.target_labels[0])
-                norm_loss_1 = self.calc_norm_loss(order=[""])
+                cls_loss_1  = torch.tensor(0.0, device=self.device)
+                norm_loss_1 = torch.tensor(0.0, device=self.device)
+                # cls_loss_1  = U.calc_cls_loss(probs, self.target_labels[0])
+                # norm_loss_1 = self.calc_norm_loss(order=[""])
 
                 combined = torch.cat([model_1_outputs.pred_boxes, probs.max(dim=2)[0].unsqueeze(-1), model_1_outputs.logits], dim=-1)
                 # [batch_size, num_queries, xywh + conf + num_classes]
@@ -106,9 +108,9 @@ class Pipeline(BasePipeline):
                 for masks in roi_masks_list:
                     flat_masks.extend(masks)
 
-                cls_loss_2 = torch.tensor(0.0, device=self.device)
                 obj_count_2 = 0
-                if len(flat_masks) > 0 and  i/self.num_iterations > 0.5:
+                cls_loss_2 = torch.tensor(0.0, device=self.device)
+                if len(flat_masks) > 0:
                     # replicate the perturbed full image for each mask
                     full_img = (image_tensor + self.bx * self.mask)  # [1,C,H,W]
                     Bf, C, H, W = full_img.shape
@@ -132,26 +134,21 @@ class Pipeline(BasePipeline):
                         probs_2 = F.sigmoid(outputs.logits)
                         cls_loss_2  += U.calc_cls_loss(probs_2, self.target_labels[1])
                         obj_count_2 += (probs_2 > self.conf_threshold_2).sum().item()
-                        
-                        # combined_2 = torch.cat([outputs.pred_boxes, probs_2.max(dim=2)[0].unsqueeze(-1), outputs.logits], dim=-1)
-                        
-                        # drawn = U.debug_image_with_boxes(batch_images * _m, combined_2, self.conf_threshold_2)
-                        # pdb.set_trace()
 
                 # pdb.set_trace()
-                # cls_loss_2 = (cls_loss_2 / obj_count_1 if obj_count_1 > 0 else torch.tensor(0.0, device=self.device))
+                cls_loss_2 = (cls_loss_2 / obj_count_1 if obj_count_1 > 0 else torch.tensor(0.0, device=self.device))
                 total_loss = cls_loss_1 + norm_loss_1 + cls_loss_2
-                total_loss.backward(retain_graph=False)
+                # total_loss.backward(retain_graph=False)
                 
                 # print(cls_loss_1.item(), cls_loss_2.item(), obj_count_1, obj_count_2)
                 
-                with torch.no_grad():
-                    self.bx.add_(-self.lr * self.bx.grad)
-                    self.bx.clamp_(-self.budget, self.budget)  # budget is a scalar in your JSON
+                # with torch.no_grad():
+                #     self.bx.add_(-self.lr * self.bx.grad)
+                #     self.bx.clamp_(-self.budget, self.budget)  # budget is a scalar in your JSON
                     
 
-                # prepare for next iteration
-                self.bx = self.bx.detach().requires_grad_(True)
+                # # prepare for next iteration
+                # self.bx = self.bx.detach().requires_grad_(True)
 
                 self.update_log(image_id=image_id, iteration=i, cls_loss_1=cls_loss_1, norm_loss_1=norm_loss_1, obj_count_1=obj_count_1, \
                     cls_loss_2=cls_loss_2, obj_count_2=obj_count_2, total_loss=total_loss)
@@ -268,14 +265,15 @@ def show_image(image_tensor, title=None):
     plt.imsave('debug_image.png', processed_img)
     
 if __name__ == "__main__":
+    # import argparse
+    # parser = argparse.ArgumentParser(description="specify path to json")
+    # parser.add_argument()
+    # args = parser.parse_args()
+    
+    
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
-    import argparse
-    parser = argparse.ArgumentParser(description="dynamic deep learning pipeline system")
-    parser.add_argument("--config_file", type=str, default="./config/test.json", help="Path to the config.json file")
-    args = parser.parse_args()
-    
-    with open(args.config_file, "r") as f:
+    test_config_path = "./config/test.json"
+    with open(test_config_path, "r") as f:
         config = json.load(f)
         
     pipeline = Pipeline(config, device)

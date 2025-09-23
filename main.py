@@ -12,37 +12,35 @@ import torch.nn.functional as F
 import torch.distributed as dist
 import torch.multiprocessing as mp
 from torch.utils.data import Subset
+from pipeline_zoo.zoo import Pipeline_dict
 
 import base_utils
 
 
 def get_pipeline(pipeline_id):
-    if pipeline_id is None:
+    if pipeline_id == -1:
         raise ValueError("Pipeline ID must be provided.")
-    
-    if pipeline_id == 0:
-        from pipeline_zoo import dual_object_detection
-        return dual_object_detection.Pipeline
     else:
-        raise ValueError(f"Invalid pipeline ID: {pipeline_id}.")
+        try:
+            return Pipeline_dict[pipeline_id]
+        except:
+            raise KeyError("invalid pipeline id, please refer to ./pipeline_zoo/zoo.py")
+
 
 
 def main(config):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    base_utils.set_all_seeds(42)
 
-    p = get_pipeline(config.pipeline_id)
+    p = get_pipeline(config["pipeline_id"])
 
     pipeline = p(config, device)
     dataset = pipeline.load_dataset()
     
+    pdb.set_trace()  # Debugging breakpoint
+
     pipeline.load_model()
     pipeline.run_attack(dataset)
-    
-    logs = pipeline.get_logs()
-    with open(config.output_log, 'w') as f:
-        json.dump(logs, f, indent=4)
-    print(f"Logs saved to {config.output_log}")
+
 
 
 def worker(gpu, config):
@@ -53,8 +51,9 @@ def worker(gpu, config):
     p = get_pipeline(config.pipeline_id)
     pipeline = p(config, device)
     dataset = pipeline.load_dataset()
-    chunks = np.array_split(idx, config.ngpus)
-    subset = Subset(full, [int(i) for i in chunks[gpu]])
+    indices = list(range(len(dataset)))
+    chunks = np.array_split(indices, config.ngpus)
+    subset = Subset(dataset, [int(i) for i in chunks[gpu]])
     
     pipeline.load_model()
     pipeline.run_attack(subset)
@@ -68,21 +67,16 @@ def worker(gpu, config):
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="dynamic deep learning pipeline system")
-
-    parser.add_argument("config_file", type=str, help="Path to the config.json file")
+    parser.add_argument("--config_file", type=str, default="./config/test.json", help="Path to the config.json file")
+    parser.add_argument("--pipeline_id", type=int, default=-1, help="specify the pipeline used by numbers")
     args = parser.parse_args()
-    
+
     with open(args.config_file, 'r') as f:
         config = json.load(f)
+        
+    config["pipeline_id"] = args.pipeline_id
     
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    config.output_dir = os.path.join(config.output_dir, timestamp)
-
-    os.makedirs(config.output_dir, exist_ok=True)
-    with open(os.path.join(config.output_dir, "config.json"), "w") as f:
-        json.dump(vars(config), f, indent=4)
-
-    if config.p:
+    if config.parallel:
         config.ngpus = torch.cuda.device_count()
         mp.spawn(worker, nprocs=config.ngpus, args=(config,))
     else:

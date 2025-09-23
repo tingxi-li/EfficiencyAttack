@@ -19,8 +19,8 @@ from transformers import RTDetrForObjectDetection, RTDetrImageProcessor
 class Pipeline(BasePipeline):
     def __init__(self, config, device=None):
         self.device = device
-        self.config = config
         
+        self.config = config
         self.num_iterations = config["num_iterations"]
         self.dataset_name = config["dataset_name"]
         self.conf_threshold_1 = config["conf_threshold_1"]
@@ -48,6 +48,7 @@ class Pipeline(BasePipeline):
         if torch.cuda.is_available():
             torch.cuda.manual_seed(seed)
             torch.cuda.manual_seed_all(seed)
+
 
     def load_dataset(self):
         if self.dataset_name == "coco":
@@ -108,7 +109,7 @@ class Pipeline(BasePipeline):
 
                 cls_loss_2 = torch.tensor(0.0, device=self.device)
                 obj_count_2 = 0
-                if len(flat_masks) > 0 and  i/self.num_iterations > 0.5:
+                if len(flat_masks) > 0:
                     # replicate the perturbed full image for each mask
                     full_img = (image_tensor + self.bx * self.mask)  # [1,C,H,W]
                     Bf, C, H, W = full_img.shape
@@ -132,15 +133,9 @@ class Pipeline(BasePipeline):
                         probs_2 = F.sigmoid(outputs.logits)
                         cls_loss_2  += U.calc_cls_loss(probs_2, self.target_labels[1])
                         obj_count_2 += (probs_2 > self.conf_threshold_2).sum().item()
-                        
-                        # combined_2 = torch.cat([outputs.pred_boxes, probs_2.max(dim=2)[0].unsqueeze(-1), outputs.logits], dim=-1)
-                        
-                        # drawn = U.debug_image_with_boxes(batch_images * _m, combined_2, self.conf_threshold_2)
-                        # pdb.set_trace()
-
                 # pdb.set_trace()
                 # cls_loss_2 = (cls_loss_2 / obj_count_1 if obj_count_1 > 0 else torch.tensor(0.0, device=self.device))
-                total_loss = cls_loss_1 + norm_loss_1 + cls_loss_2
+                total_loss = cls_loss_1 + norm_loss_1 # + cls_loss_2
                 total_loss.backward(retain_graph=False)
                 
                 # print(cls_loss_1.item(), cls_loss_2.item(), obj_count_1, obj_count_2)
@@ -191,12 +186,7 @@ class Pipeline(BasePipeline):
         return mask
             
 
-    def calc_cls_loss(self, probs, target_labels):
-        target_tensor = torch.zeros_like(probs)
-        for i in target_labels:
-            target_tensor[:, :, i] = 1.0
-        cls_loss = F.mse_loss(probs, target_tensor, reduction='sum') / (len(probs.squeeze()) + 1)
-        return cls_loss
+
     
     
     def calc_norm_loss(self, order=["linf"]):

@@ -19,8 +19,8 @@ from transformers import RTDetrForObjectDetection, RTDetrImageProcessor
 class Pipeline(BasePipeline):
     def __init__(self, config, device=None):
         self.device = device
-        self.config = config
         
+        self.config = config
         self.num_iterations = config["num_iterations"]
         self.dataset_name = config["dataset_name"]
         self.conf_threshold_1 = config["conf_threshold_1"]
@@ -35,7 +35,13 @@ class Pipeline(BasePipeline):
         self.budget = config["budget"]
         # control memory use when batching model_2 inputs
         self.model2_batch_size = config.get("model2_batch_size", 8)
-
+        # A-phase stabilization settings
+        self.a_window = config.get("a_phase_window", 20)
+        self.a_min_delta = float(config.get("a_phase_min_delta", 1e-4))
+        self.a_patience = int(config.get("a_phase_patience", 3))
+        self.a_min_iters = int(config.get("a_phase_min_iters", 10))
+        self.a_plateau = U.LossPlateauDetector(self.a_window, self.a_min_delta, self.a_patience)
+        self.in_b_phase = False
         self.log_dict = {}
         
         self.randomseed()
@@ -48,6 +54,7 @@ class Pipeline(BasePipeline):
         if torch.cuda.is_available():
             torch.cuda.manual_seed(seed)
             torch.cuda.manual_seed_all(seed)
+
 
     def load_dataset(self):
         if self.dataset_name == "coco":
@@ -106,55 +113,72 @@ class Pipeline(BasePipeline):
                 for masks in roi_masks_list:
                     flat_masks.extend(masks)
 
-                cls_loss_2 = torch.tensor(0.0, device=self.device)
-                obj_count_2 = 0
-                if len(flat_masks) > 0 and  i/self.num_iterations > 0.5:
-                    # replicate the perturbed full image for each mask
-                    full_img = (image_tensor + self.bx * self.mask)  # [1,C,H,W]
-                    Bf, C, H, W = full_img.shape
-                    # Keep num_queries safe; tokens derived from full image size
-                    min_tokens = max(1, (H // 32) * (W // 32))
-                    safe_queries = max(1, min(self.num_queries_2, min_tokens))
-                    if self.model_2.config.num_queries != safe_queries:
-                        self.model_2.config.num_queries = safe_queries
+                # Phase scheduling: optimize A first until plateau, then optimize B with projection
+                A_loss = cls_loss_1 + norm_loss_1
+                plateau = self.a_plateau.update(A_loss.detach().item())
 
-                    # micro-batch to control VRAM
-                    N = len(flat_masks)
-                    bs2 = max(1, int(self.model2_batch_size))
-                    for start in range(0, N, bs2):
-                        end = min(start + bs2, N)
-                        batch_pixel_masks = torch.stack(flat_masks[start:end], dim=0)  # [n,H,W]
-                        batch_images = full_img.expand(end - start, -1, -1, -1).contiguous()
-                        # outputs = self.model_2(batch_images, pixel_mask=batch_pixel_masks, output_hidden_states=True)
-                        _m = batch_pixel_masks.unsqueeze(1).expand(-1, 3, -1, -1)
-                        outputs = self.model_2(batch_images * _m, output_hidden_states=True)
+                if (not self.in_b_phase) and (i >= self.a_min_iters) and plateau:
+                    self.in_b_phase = True
 
-                        probs_2 = F.sigmoid(outputs.logits)
-                        cls_loss_2  += U.calc_cls_loss(probs_2, self.target_labels[1])
-                        obj_count_2 += (probs_2 > self.conf_threshold_2).sum().item()
-                        
-                        # combined_2 = torch.cat([outputs.pred_boxes, probs_2.max(dim=2)[0].unsqueeze(-1), outputs.logits], dim=-1)
-                        
-                        # drawn = U.debug_image_with_boxes(batch_images * _m, combined_2, self.conf_threshold_2)
-                        # pdb.set_trace()
+                if not self.in_b_phase:
+                    # Only optimize A
+                    grad_A = U.grad_wrt(self.bx, A_loss, retain_graph=False, create_graph=False)
+                    U.assign_flattened_grad(self.bx, grad_A.detach())
+                    grad_B = torch.tensor(0.0, device=self.device)
+                    grad_final = grad_A
+                else:
+                    # Compute B only when needed to save compute/memory
+                    cls_loss_2 = torch.tensor(0.0, device=self.device)
+                    obj_count_2 = 0
+                    if len(flat_masks) > 0:
+                        # replicate the perturbed full image for each mask
+                        full_img = (image_tensor + self.bx * self.mask)  # [1,C,H,W]
+                        Bf, C, H, W = full_img.shape
+                        # Keep num_queries safe; tokens derived from full image size
+                        min_tokens = max(1, (H // 32) * (W // 32))
+                        safe_queries = max(1, min(self.num_queries_2, min_tokens))
+                        if self.model_2.config.num_queries != safe_queries:
+                            self.model_2.config.num_queries = safe_queries
 
-                # pdb.set_trace()
-                # cls_loss_2 = (cls_loss_2 / obj_count_1 if obj_count_1 > 0 else torch.tensor(0.0, device=self.device))
-                total_loss = cls_loss_1 + norm_loss_1 + cls_loss_2
-                total_loss.backward(retain_graph=False)
+                        # micro-batch to control VRAM
+                        N = len(flat_masks)
+                        bs2 = max(1, int(self.model2_batch_size))
+                        for start in range(0, N, bs2):
+                            end = min(start + bs2, N)
+                            batch_pixel_masks = torch.stack(flat_masks[start:end], dim=0)  # [n,H,W]
+                            batch_images = full_img.expand(end - start, -1, -1, -1).contiguous()
+                            # outputs = self.model_2(batch_images, pixel_mask=batch_pixel_masks, output_hidden_states=True)
+                            _m = batch_pixel_masks.unsqueeze(1).expand(-1, 3, -1, -1)
+                            outputs = self.model_2(batch_images * _m, output_hidden_states=True)
+
+                            probs_2 = F.sigmoid(outputs.logits)
+                            cls_loss_2  += U.calc_cls_loss(probs_2, self.target_labels[1])
+                            obj_count_2 += (probs_2 > self.conf_threshold_2).sum().item()
+
+                    B_loss = cls_loss_2
+                    grad_A = U.grad_wrt(self.bx, A_loss, retain_graph=True, create_graph=False)
+                    grad_B = U.grad_wrt(self.bx, B_loss, retain_graph=True, create_graph=False)
+                    grad_A_list = [grad_A]
+                    grad_B_perp = U.project_onto_orthogonal_complement(grad_B, grad_A_list, eps=1e-12)
+                    grad_final = grad_B_perp
+                    U.assign_flattened_grad(self.bx, grad_final.detach())
                 
-                # print(cls_loss_1.item(), cls_loss_2.item(), obj_count_1, obj_count_2)
+                # total_loss = cls_loss_1 + norm_loss_1 + cls_loss_2 
+                # total_loss.backward(retain_graph=False)
                 
                 with torch.no_grad():
                     self.bx.add_(-self.lr * self.bx.grad)
-                    self.bx.clamp_(-self.budget, self.budget)  # budget is a scalar in your JSON
+                    self.bx.clamp_(-self.budget, self.budget)  # budget is a scalar in JSON
                     
 
                 # prepare for next iteration
                 self.bx = self.bx.detach().requires_grad_(True)
 
                 self.update_log(image_id=image_id, iteration=i, cls_loss_1=cls_loss_1, norm_loss_1=norm_loss_1, obj_count_1=obj_count_1, \
-                    cls_loss_2=cls_loss_2, obj_count_2=obj_count_2, total_loss=total_loss)
+                    cls_loss_2=(cls_loss_2 if self.in_b_phase else torch.tensor(0.0, device=self.device)), \
+                    obj_count_2=(obj_count_2 if self.in_b_phase else 0), grad_A_norm=grad_A.norm() if isinstance(grad_A, torch.Tensor) else None, \
+                    grad_B_norm=(grad_B.norm() if isinstance(grad_B, torch.Tensor) and hasattr(grad_B, 'norm') else None), \
+                    grad_final_norm=grad_final.norm() if isinstance(grad_final, torch.Tensor) else None)
 
         self.write_log()
 
@@ -191,12 +215,7 @@ class Pipeline(BasePipeline):
         return mask
             
 
-    def calc_cls_loss(self, probs, target_labels):
-        target_tensor = torch.zeros_like(probs)
-        for i in target_labels:
-            target_tensor[:, :, i] = 1.0
-        cls_loss = F.mse_loss(probs, target_tensor, reduction='sum') / (len(probs.squeeze()) + 1)
-        return cls_loss
+
     
     
     def calc_norm_loss(self, order=["linf"]):
@@ -214,7 +233,8 @@ class Pipeline(BasePipeline):
         return total_norm_loss 
 
 
-    def update_log(self, image_id, iteration, cls_loss_1=None, cls_loss_2=None, norm_loss_1=None, norm_loss_2=None, obj_count_1=None, obj_count_2=None, total_loss=None):
+    def update_log(self, image_id, iteration, cls_loss_1=None, cls_loss_2=None, norm_loss_1=None, norm_loss_2=None, obj_count_1=None, \
+        obj_count_2=None, total_loss=None, grad_A_norm=None, grad_B_norm=None, grad_final_norm=None):
         if self.config["output_log"] is not True: return
         log_entry = {
             "iteration": iteration,
@@ -224,7 +244,10 @@ class Pipeline(BasePipeline):
             "cls_loss_2":  self.unhook(cls_loss_2),
             "norm_loss_1": self.unhook(norm_loss_1),
             "norm_loss_2": self.unhook(norm_loss_2),
-            "total_loss":  self.unhook(total_loss),
+            # "total_loss":  self.unhook(total_loss),
+            "grad_A_norm":     self.unhook(grad_A_norm),
+            "grad_B_norm":     self.unhook(grad_B_norm),
+            "grad_final_norm": self.unhook(grad_final_norm),
         }
 
         self.log_dict[image_id].append(log_entry)
@@ -269,7 +292,7 @@ def show_image(image_tensor, title=None):
     
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
+        
     import argparse
     parser = argparse.ArgumentParser(description="dynamic deep learning pipeline system")
     parser.add_argument("--config_file", type=str, default="./config/test.json", help="Path to the config.json file")
