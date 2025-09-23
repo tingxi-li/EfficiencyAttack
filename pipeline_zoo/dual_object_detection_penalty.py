@@ -90,6 +90,9 @@ class Pipeline(BasePipeline):
         
     
     def run_attack(self, dataset):
+        # establish a run-level timestamp to sync saved assets and logs
+        if not hasattr(self, "run_timestamp") or self.run_timestamp is None:
+            self.run_timestamp = time.strftime("%Y%m%d-%H%M%S")
         for index, example in tqdm(enumerate(dataset), total=dataset.__len__()):
             image_id = example["image_id"]
             image = example["image"].convert("RGB")
@@ -112,7 +115,9 @@ class Pipeline(BasePipeline):
                 
                 # drawn = U.debug_image_with_boxes(image_tensor + self.bx * self.mask, combined, self.conf_threshold_1)
 
-                obj_count_1 = (probs > self.conf_threshold_1).sum().item()
+                _labels1 = self.target_labels[0] if isinstance(self.target_labels[0], (list, tuple)) else []
+                _probs1 = probs[..., _labels1] if len(_labels1) > 0 else probs
+                obj_count_1 = (_probs1 > self.conf_threshold_1).sum().item()
 
                 # Build ROI pixel masks for boxes and batch model_2 over the full-size image
                 roi_masks_list = U.masks_from_boxes(image_tensor, combined, self.conf_threshold_1)
@@ -137,8 +142,10 @@ class Pipeline(BasePipeline):
                     obj_count_2 = 0
                 else:
                     # B-phase: compute B, then ALM augmented objective and project gradient
-                    cls_loss_2 = torch.tensor(0.0, device=self.device)
+                    cls_loss_2_total = torch.tensor(0.0, device=self.device)
                     obj_count_2 = 0
+                    grad_A = U.grad_wrt(self.bx, A_loss, retain_graph=False, create_graph=False)
+                    grad_B = torch.zeros_like(grad_A)
                     if len(flat_masks) > 0:
                         full_img = (image_tensor + self.bx * self.mask)  # [1,C,H,W]
                         Bf, C, H, W = full_img.shape
@@ -153,26 +160,29 @@ class Pipeline(BasePipeline):
                             end = min(start + bs2, N)
                             batch_pixel_masks = torch.stack(flat_masks[start:end], dim=0)
                             batch_images = full_img.expand(end - start, -1, -1, -1).contiguous()
-                            # outputs = self.model_2(batch_images, pixel_mask=batch_pixel_masks, output_hidden_states=True)
-                            _m = batch_pixel_masks.unsqueeze(1).expand(-1, 3, -1, -1)
+                            _m = batch_pixel_masks.to(batch_images.dtype).unsqueeze(1).expand(-1, 3, -1, -1)
                             outputs = self.model_2(batch_images * _m, output_hidden_states=True)
 
                             probs_2 = F.sigmoid(outputs.logits)
-                            cls_loss_2  += U.calc_cls_loss(probs_2, self.target_labels[1])
-                            obj_count_2 += (probs_2 > self.conf_threshold_2).sum().item()
+                            loss_B = U.calc_cls_loss(probs_2, self.target_labels[1])
+                            grad_B_micro = U.grad_wrt(self.bx, loss_B, retain_graph=False, create_graph=False)
+                            grad_B = grad_B + grad_B_micro
+                            cls_loss_2_total = cls_loss_2_total + loss_B.detach()
+                            _labels2 = self.target_labels[1] if isinstance(self.target_labels[1], (list, tuple)) else []
+                            _probs2 = probs_2[..., _labels2] if len(_labels2) > 0 else probs_2
+                            obj_count_2 += (_probs2 > self.conf_threshold_2).sum().item()
 
-                    B_loss = cls_loss_2
                     g = A_loss - torch.tensor(self.a_target, device=self.device)
                     g_pos = torch.clamp(g, min=0.0)
-                    L_aug = B_loss + self.alm_lambda * g_pos + 0.5 * self.alm_rho * (g_pos * g_pos)
-
-                    grad_A = U.grad_wrt(self.bx, A_loss, retain_graph=True, create_graph=False)
-                    grad_L = U.grad_wrt(self.bx, L_aug, retain_graph=True, create_graph=False)
-                    grad_proj = U.project_onto_orthogonal_complement(grad_L, [grad_A], eps=1e-12)
+                    g_pos_val = float(g_pos.detach().item())
+                    indicator = 1.0 if g_pos_val > 0.0 else 0.0
+                    scale = (self.alm_lambda + self.alm_rho * g_pos_val) * indicator
+                    grad_proj = U.project_onto_orthogonal_complement(grad_B + grad_A * scale, [grad_A], eps=1e-12)
                     U.assign_flattened_grad(self.bx, grad_proj.detach())
-                    total_loss = L_aug
+                    cls_loss_2 = cls_loss_2_total
+                    total_loss = cls_loss_2_total + torch.tensor(self.alm_lambda * g_pos_val + 0.5 * self.alm_rho * (g_pos_val * g_pos_val), device=self.device)
                     with torch.no_grad():
-                        self.alm_lambda = max(0.0, self.alm_lambda + self.alm_rho * float(g_pos.detach().item()))
+                        self.alm_lambda = max(0.0, self.alm_lambda + self.alm_rho * g_pos_val)
                 
                 # print(cls_loss_1.item(), cls_loss_2.item(), obj_count_1, obj_count_2)
                 
@@ -195,6 +205,19 @@ class Pipeline(BasePipeline):
                 else:
                     log_kwargs.update({"phase": 0.0})
                 self.update_log(**log_kwargs)
+
+            # save final perturbed image for this sample (timestamp aligned with logs)
+            try:
+                out_root = "output"
+                stemname = Path(__file__).stem
+                out_dir = os.path.join(out_root, f"{stemname}_{self.run_timestamp}")
+                os.makedirs(out_dir, exist_ok=True)
+                perturbed = (image_tensor + self.bx * self.mask).clamp(0.0, 1.0)
+                img_np = perturbed.squeeze(0).permute(1, 2, 0).detach().cpu().numpy()
+                out_path = os.path.join(out_dir, f"{image_id}.png")
+                plt.imsave(out_path, img_np)
+            except Exception as e:
+                print(f"[warn] failed to save perturbed image for {image_id}: {e}")
 
         self.write_log()
 
@@ -238,13 +261,13 @@ class Pipeline(BasePipeline):
         total_norm_loss = torch.tensor(0.0, device=self.device)
         if "linf" in order:
             l_inf = torch.norm(self.bx * self.mask, p=float("inf"))
-            total_norm_loss += l_inf
+            total_norm_loss = total_norm_loss + l_inf
         if "l2" in order:
             l_2 = torch.norm(self.bx * self.mask, p=2)
-            total_norm_loss += l_2
+            total_norm_loss = total_norm_loss + l_2
         if "l1" in order:
             l_1 = torch.norm(self.bx * self.mask, p=1)
-            total_norm_loss += l_1
+            total_norm_loss = total_norm_loss + l_1
         
         return total_norm_loss 
 
@@ -277,7 +300,11 @@ class Pipeline(BasePipeline):
             log_path = "./logs"
         os.makedirs(log_path, exist_ok=True)
         
-        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        # use the same timestamp as run_attack for consistency
+        timestamp = getattr(self, "run_timestamp", None)
+        if timestamp is None:
+            timestamp = time.strftime("%Y%m%d-%H%M%S")
+            self.run_timestamp = timestamp
         stemname = Path(__file__).stem
         log_file = os.path.join(log_path, f"log_{stemname}_{timestamp}.json")
         config_file = os.path.join(log_path, f"log_{stemname}_{timestamp}_configs.json")

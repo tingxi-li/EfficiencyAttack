@@ -77,6 +77,9 @@ class Pipeline(BasePipeline):
         
     
     def run_attack(self, dataset):
+        # establish a run-level timestamp to sync saved assets and logs
+        if not hasattr(self, "run_timestamp") or self.run_timestamp is None:
+            self.run_timestamp = time.strftime("%Y%m%d-%H%M%S")
         for index, example in tqdm(enumerate(dataset), total=dataset.__len__()):
             image_id = example["image_id"]
             image = example["image"].convert("RGB")
@@ -98,7 +101,9 @@ class Pipeline(BasePipeline):
                 
                 # drawn = U.debug_image_with_boxes(image_tensor + self.bx * self.mask, combined, self.conf_threshold_1)
 
-                obj_count_1 = (probs > self.conf_threshold_1).sum().item()
+                _labels1 = self.target_labels[0] if isinstance(self.target_labels[0], (list, tuple)) else []
+                _probs1 = probs[..., _labels1] if len(_labels1) > 0 else probs
+                obj_count_1 = (_probs1 > self.conf_threshold_1).sum().item()
 
                 # Build ROI pixel masks for boxes and batch model_2 over the full-size image
                 roi_masks_list = U.masks_from_boxes(image_tensor, combined, self.conf_threshold_1)
@@ -107,7 +112,13 @@ class Pipeline(BasePipeline):
                 for masks in roi_masks_list:
                     flat_masks.extend(masks)
 
-                cls_loss_2 = torch.tensor(0.0, device=self.device)
+                if self.bx.grad is not None:
+                    self.bx.grad.zero_()
+
+                loss_A = cls_loss_1 + norm_loss_1
+                loss_A.backward(retain_graph=False)
+
+                cls_loss_2_total = torch.tensor(0.0, device=self.device)
                 obj_count_2 = 0
                 if len(flat_masks) > 0:
                     # replicate the perturbed full image for each mask
@@ -126,17 +137,18 @@ class Pipeline(BasePipeline):
                         end = min(start + bs2, N)
                         batch_pixel_masks = torch.stack(flat_masks[start:end], dim=0)  # [n,H,W]
                         batch_images = full_img.expand(end - start, -1, -1, -1).contiguous()
-                        # outputs = self.model_2(batch_images, pixel_mask=batch_pixel_masks, output_hidden_states=True)
-                        _m = batch_pixel_masks.unsqueeze(1).expand(-1, 3, -1, -1)
+                        _m = batch_pixel_masks.to(batch_images.dtype).unsqueeze(1).expand(-1, 3, -1, -1)
                         outputs = self.model_2(batch_images * _m, output_hidden_states=True)
 
                         probs_2 = F.sigmoid(outputs.logits)
-                        cls_loss_2  += U.calc_cls_loss(probs_2, self.target_labels[1])
-                        obj_count_2 += (probs_2 > self.conf_threshold_2).sum().item()
-                # pdb.set_trace()
-                # cls_loss_2 = (cls_loss_2 / obj_count_1 if obj_count_1 > 0 else torch.tensor(0.0, device=self.device))
-                total_loss = cls_loss_1 + norm_loss_1 # + cls_loss_2
-                total_loss.backward(retain_graph=False)
+                        loss_B = U.calc_cls_loss(probs_2, self.target_labels[1])
+                        loss_B.backward(retain_graph=False)
+                        cls_loss_2_total = cls_loss_2_total + loss_B.detach()
+                        _labels2 = self.target_labels[1] if isinstance(self.target_labels[1], (list, tuple)) else []
+                        _probs2 = probs_2[..., _labels2] if len(_labels2) > 0 else probs_2
+                        obj_count_2 += (_probs2 > self.conf_threshold_2).sum().item()
+                # cls_loss_2_total = (cls_loss_2_total / obj_count_1 if obj_count_1 > 0 else torch.tensor(0.0, device=self.device))
+                total_loss = cls_loss_1 + norm_loss_1 + cls_loss_2_total
                 
                 # print(cls_loss_1.item(), cls_loss_2.item(), obj_count_1, obj_count_2)
                 
@@ -149,7 +161,20 @@ class Pipeline(BasePipeline):
                 self.bx = self.bx.detach().requires_grad_(True)
 
                 self.update_log(image_id=image_id, iteration=i, cls_loss_1=cls_loss_1, norm_loss_1=norm_loss_1, obj_count_1=obj_count_1, \
-                    cls_loss_2=cls_loss_2, obj_count_2=obj_count_2, total_loss=total_loss)
+                    cls_loss_2=cls_loss_2_total, obj_count_2=obj_count_2, total_loss=total_loss)
+
+            # save final perturbed image for this sample (timestamp aligned with logs)
+            try:
+                out_root = "output"
+                stemname = Path(__file__).stem
+                out_dir = os.path.join(out_root, f"{stemname}_{self.run_timestamp}")
+                os.makedirs(out_dir, exist_ok=True)
+                perturbed = (image_tensor + self.bx * self.mask).clamp(0.0, 1.0)
+                img_np = perturbed.squeeze(0).permute(1, 2, 0).detach().cpu().numpy()
+                out_path = os.path.join(out_dir, f"{image_id}.png")
+                plt.imsave(out_path, img_np)
+            except Exception as e:
+                print(f"[warn] failed to save perturbed image for {image_id}: {e}")
 
         self.write_log()
 
@@ -226,7 +251,11 @@ class Pipeline(BasePipeline):
             log_path = "./logs"
         os.makedirs(log_path, exist_ok=True)
         
-        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        # use the same timestamp as run_attack for consistency
+        timestamp = getattr(self, "run_timestamp", None)
+        if timestamp is None:
+            timestamp = time.strftime("%Y%m%d-%H%M%S")
+            self.run_timestamp = timestamp
         stemname = Path(__file__).stem
         log_file = os.path.join(log_path, f"log_{stemname}_{timestamp}.json")
         config_file = os.path.join(log_path, f"log_{stemname}_{timestamp}_configs.json")

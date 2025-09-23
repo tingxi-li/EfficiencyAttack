@@ -7,9 +7,9 @@ BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 pipelines=(
   "dual_object_detection.py"
-  "dual_object_detection_clean.py"
-  "dual_object_detection_clean_rand.py"
-  "dual_object_detection_clean_randn.py"
+  # "dual_object_detection_clean.py"
+  # "dual_object_detection_clean_rand.py"
+  # "dual_object_detection_clean_randn.py"
   "dual_object_detection_gradient_projection.py"
   "dual_object_detection_penalty.py"
   "dual_object_detection_phase_a.py"

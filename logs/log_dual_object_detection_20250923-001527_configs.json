@@ -17,8 +17,12 @@
         0.2
     ],
     "target_labels": [
-        [],
-        []
+        [
+            2
+        ],
+        [
+            2
+        ]
     ],
     "learning_rate": 1.5,
     "output_log": true,
