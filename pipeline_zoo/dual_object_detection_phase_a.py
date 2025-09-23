@@ -121,9 +121,7 @@ class Pipeline(BasePipeline):
                 cls_loss_2_total = torch.tensor(0.0, device=self.device)
                 obj_count_2 = 0
                 if len(flat_masks) > 0:
-                    # replicate the perturbed full image for each mask
-                    full_img = (image_tensor + self.bx * self.mask)  # [1,C,H,W]
-                    Bf, C, H, W = full_img.shape
+                    Bf, C, H, W = image_tensor.shape
                     # Keep num_queries safe; tokens derived from full image size
                     min_tokens = max(1, (H // 32) * (W // 32))
                     safe_queries = max(1, min(self.num_queries_2, min_tokens))
@@ -136,6 +134,7 @@ class Pipeline(BasePipeline):
                     for start in range(0, N, bs2):
                         end = min(start + bs2, N)
                         batch_pixel_masks = torch.stack(flat_masks[start:end], dim=0)  # [n,H,W]
+                        full_img = image_tensor + self.bx * self.mask  # rebuild graph per micro-batch
                         batch_images = full_img.expand(end - start, -1, -1, -1).contiguous()
                         _m = batch_pixel_masks.to(batch_images.dtype).unsqueeze(1).expand(-1, 3, -1, -1)
                         outputs = self.model_2(batch_images * _m, output_hidden_states=True)

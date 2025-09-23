@@ -1,7 +1,7 @@
 {
     "seed":42,
     "parallel": false,
-    "num_iterations": 2,
+    "num_iterations": 200,
     "dataset_name": "coco",
     "conf_threshold_1": 0.5,
     "conf_threshold_2": 0.5,
