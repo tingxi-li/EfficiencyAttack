@@ -1,0 +1,31 @@
+{
+    "seed": 42,
+    "parallel": false,
+    "num_iterations": 200,
+    "dataset_name": "coco",
+    "conf_threshold_1": 0.5,
+    "conf_threshold_2": 0.5,
+    "hf_model_name_1": "PekingU/rtdetr_r18vd",
+    "hf_model_name_2": "PekingU/rtdetr_r18vd",
+    "num_queries_1": 30,
+    "num_queries_2": 30,
+    "test_size": 100,
+    "adv_patch_xywh": [
+        0.5,
+        0.5,
+        0.2,
+        0.2
+    ],
+    "target_labels": [
+        [
+            2
+        ],
+        [
+            2
+        ]
+    ],
+    "learning_rate": 1.5,
+    "output_log": true,
+    "budget": 0.08,
+    "model2_batch_size": 8
+}
