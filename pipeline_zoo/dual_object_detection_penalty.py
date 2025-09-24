@@ -6,14 +6,14 @@ import json
 import torch
 import random
 import numpy as np
-import utilities as U
+from . import utilities as U
 from tqdm import tqdm
 from pathlib import Path
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
 from datasets import load_dataset
 from collections import defaultdict
-from base_pipeline import BasePipeline
+from .base_pipeline import BasePipeline
 from transformers import RTDetrForObjectDetection, RTDetrImageProcessor
 
 class Pipeline(BasePipeline):
@@ -35,14 +35,33 @@ class Pipeline(BasePipeline):
         self.budget = config["budget"]
         # control memory use when batching model_2 inputs
         self.model2_batch_size = config.get("model2_batch_size", 8)
+        self.cls_loss_weight_1 = float(config.get("cls_loss_weight_1", 1.0))
+        self.cls_loss_weight_2 = float(config.get("cls_loss_weight_2", 1.0))
+        weight_sum = self.cls_loss_weight_1 + self.cls_loss_weight_2
+        if weight_sum <= 0:
+            self.cls_loss_weight_1 = 0.5
+            self.cls_loss_weight_2 = 0.5
+        else:
+            self.cls_loss_weight_1 /= weight_sum
+            self.cls_loss_weight_2 /= weight_sum
 
         # A-first scheduling and ALM parameters
         self.a_window = config.get("a_phase_window", 20)
-        self.a_min_delta = float(config.get("a_phase_min_delta", 1e-4))
+        self.a_min_delta = float(config.get("a_phase_min_delta", 0.0))
         self.a_patience = int(config.get("a_phase_patience", 3))
         self.a_min_iters = int(config.get("a_phase_min_iters", 10))
         self.a_margin = float(config.get("a_phase_margin", 0.0))  # allowable increase (absolute)
-        self.a_plateau = U.LossPlateauDetector(self.a_window, self.a_min_delta, self.a_patience)
+        self.a_min_rel = float(self.config.get("a_phase_min_rel", 0.0))
+        self.a_slope_thresh = float(self.config.get("a_phase_slope_thresh", 0.0))
+        self.a_use_window_best = bool(self.config.get("a_phase_use_window_best", True))
+        self.a_min_drop = float(self.config.get("a_phase_min_drop", 0.0))
+        self.a_min_drop_rel = float(self.config.get("a_phase_min_drop_rel", 0.0))
+        self.a_plateau = U.LossPlateauDetector(
+            self.a_window, self.a_min_delta, self.a_patience,
+            min_rel=self.a_min_rel,
+            slope_thresh=self.a_slope_thresh,
+            use_window_best=self.a_use_window_best,
+        )
         self.in_b_phase = False
         self.a_target = None
         # ALM multipliers
@@ -54,7 +73,7 @@ class Pipeline(BasePipeline):
         self.randomseed()
         
     def randomseed(self):
-        seed = config["seed"]
+        seed = self.config["seed"]
         random.seed(seed)
         np.random.seed(seed)
         torch.manual_seed(seed)
@@ -103,12 +122,15 @@ class Pipeline(BasePipeline):
 
             self.log_dict[image_id] = []
             self.in_b_phase = False
+            a_initial_loss = None
+            a_best_loss = None
             for i in range(self.num_iterations):
                 model_1_outputs = self.model_1(image_tensor + self.bx * self.mask, output_hidden_states=True)
                 probs = F.sigmoid(model_1_outputs.logits)
                 
                 cls_loss_1  = U.calc_cls_loss(probs, self.target_labels[0])
                 norm_loss_1 = self.calc_norm_loss(order=[""])
+                weighted_cls_loss_1 = self.cls_loss_weight_1 * cls_loss_1
 
                 combined = torch.cat([model_1_outputs.pred_boxes, probs.max(dim=2)[0].unsqueeze(-1), model_1_outputs.logits], dim=-1)
                 # [batch_size, num_queries, xywh + conf + num_classes]
@@ -127,11 +149,30 @@ class Pipeline(BasePipeline):
                     flat_masks.extend(masks)
 
                 # Phase scheduling: first optimize A-only until plateau, then ALM+projection for B while guarding A
-                A_loss = cls_loss_1 + norm_loss_1
-                plateau = self.a_plateau.update(A_loss.detach().item())
-                if (not self.in_b_phase) and (i >= self.a_min_iters) and plateau:
+                A_loss = weighted_cls_loss_1 + norm_loss_1
+                A_loss_value = A_loss.detach().item()
+                if a_initial_loss is None:
+                    a_initial_loss = A_loss_value
+                    a_best_loss = A_loss_value
+                else:
+                    a_best_loss = min(a_best_loss, A_loss_value)
+
+                drop_abs = (a_initial_loss - a_best_loss) if a_initial_loss is not None else 0.0
+                if a_initial_loss is None or abs(a_initial_loss) <= 1e-12:
+                    drop_rel = 0.0
+                else:
+                    drop_rel = drop_abs / abs(a_initial_loss)
+
+                drop_ok = True
+                if self.a_min_drop > 0.0 and drop_abs < self.a_min_drop:
+                    drop_ok = False
+                if self.a_min_drop_rel > 0.0 and drop_rel < self.a_min_drop_rel:
+                    drop_ok = False
+
+                plateau = self.a_plateau.update(A_loss_value)
+                if (not self.in_b_phase) and (i >= self.a_min_iters) and plateau and drop_ok:
                     self.in_b_phase = True
-                    self.a_target = A_loss.detach().item() + self.a_margin
+                    self.a_target = (a_best_loss if a_best_loss is not None else A_loss_value) + self.a_margin
 
                 if not self.in_b_phase:
                     # A-phase: only minimize A_loss
@@ -165,7 +206,8 @@ class Pipeline(BasePipeline):
 
                             probs_2 = F.sigmoid(outputs.logits)
                             loss_B = U.calc_cls_loss(probs_2, self.target_labels[1])
-                            grad_B_micro = U.grad_wrt(self.bx, loss_B, retain_graph=False, create_graph=False)
+                            weighted_loss_B = self.cls_loss_weight_2 * loss_B
+                            grad_B_micro = U.grad_wrt(self.bx, weighted_loss_B, retain_graph=False, create_graph=False)
                             grad_B = grad_B + grad_B_micro
                             cls_loss_2_total = cls_loss_2_total + loss_B.detach()
                             _labels2 = self.target_labels[1] if isinstance(self.target_labels[1], (list, tuple)) else []
@@ -180,7 +222,7 @@ class Pipeline(BasePipeline):
                     grad_proj = U.project_onto_orthogonal_complement(grad_B + grad_A * scale, [grad_A], eps=1e-12)
                     U.assign_flattened_grad(self.bx, grad_proj.detach())
                     cls_loss_2 = cls_loss_2_total
-                    total_loss = cls_loss_2_total + torch.tensor(self.alm_lambda * g_pos_val + 0.5 * self.alm_rho * (g_pos_val * g_pos_val), device=self.device)
+                    total_loss = self.cls_loss_weight_2 * cls_loss_2_total + torch.tensor(self.alm_lambda * g_pos_val + 0.5 * self.alm_rho * (g_pos_val * g_pos_val), device=self.device)
                     with torch.no_grad():
                         self.alm_lambda = max(0.0, self.alm_lambda + self.alm_rho * g_pos_val)
                 
@@ -196,14 +238,21 @@ class Pipeline(BasePipeline):
 
                 # logging
                 log_kwargs = dict(
-                    image_id=image_id, iteration=i, cls_loss_1=cls_loss_1, norm_loss_1=norm_loss_1, obj_count_1=obj_count_1,
+                    image_id=image_id,
+                    iteration=i,
+                    cls_loss_1=cls_loss_1,
+                    norm_loss_1=norm_loss_1,
+                    obj_count_1=obj_count_1,
                     cls_loss_2=(cls_loss_2 if 'cls_loss_2' in locals() else torch.tensor(0.0, device=self.device)),
-                    obj_count_2=(obj_count_2 if 'obj_count_2' in locals() else 0), total_loss=total_loss,
+                    obj_count_2=(obj_count_2 if 'obj_count_2' in locals() else 0),
+                    total_loss=total_loss,
+                    phase_flag=int(self.in_b_phase),
+                    phase=float(self.in_b_phase),
+                    a_drop_abs=drop_abs,
+                    a_drop_rel=drop_rel,
                 )
                 if self.in_b_phase:
-                    log_kwargs.update({"phase": 1.0, "alm_lambda": torch.tensor(self.alm_lambda), "a_target": torch.tensor(self.a_target)})
-                else:
-                    log_kwargs.update({"phase": 0.0})
+                    log_kwargs.update({"alm_lambda": torch.tensor(self.alm_lambda), "a_target": torch.tensor(self.a_target)})
                 self.update_log(**log_kwargs)
 
             # save final perturbed image for this sample (timestamp aligned with logs)

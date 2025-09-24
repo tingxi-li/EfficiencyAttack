@@ -6,14 +6,14 @@ import json
 import torch
 import random
 import numpy as np
-import utilities as U
+from . import utilities as U
 from tqdm import tqdm
 from pathlib import Path
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
 from datasets import load_dataset
 from collections import defaultdict
-from base_pipeline import BasePipeline
+from .base_pipeline import BasePipeline
 from transformers import RTDetrForObjectDetection, RTDetrImageProcessor
 
 class Pipeline(BasePipeline):
@@ -35,13 +35,22 @@ class Pipeline(BasePipeline):
         self.budget = config["budget"]
         # control memory use when batching model_2 inputs
         self.model2_batch_size = config.get("model2_batch_size", 8)
+        self.cls_loss_weight_1 = float(config.get("cls_loss_weight_1", 1.0))
+        self.cls_loss_weight_2 = float(config.get("cls_loss_weight_2", 1.0))
+        weight_sum = self.cls_loss_weight_1 + self.cls_loss_weight_2
+        if weight_sum <= 0:
+            self.cls_loss_weight_1 = 0.5
+            self.cls_loss_weight_2 = 0.5
+        else:
+            self.cls_loss_weight_1 /= weight_sum
+            self.cls_loss_weight_2 /= weight_sum
 
         self.log_dict = {}
         
         self.randomseed()
         
     def randomseed(self):
-        seed = config["seed"]
+        seed = self.config["seed"]
         random.seed(seed)
         np.random.seed(seed)
         torch.manual_seed(seed)
@@ -94,6 +103,7 @@ class Pipeline(BasePipeline):
                 
                 cls_loss_1  = U.calc_cls_loss(probs, self.target_labels[0])
                 norm_loss_1 = self.calc_norm_loss(order=[""])
+                weighted_cls_loss_1 = self.cls_loss_weight_1 * cls_loss_1
 
                 combined = torch.cat([model_1_outputs.pred_boxes, probs.max(dim=2)[0].unsqueeze(-1), model_1_outputs.logits], dim=-1)
                 # [batch_size, num_queries, xywh + conf + num_classes]
@@ -115,12 +125,12 @@ class Pipeline(BasePipeline):
                 if self.bx.grad is not None:
                     self.bx.grad.zero_()
 
-                loss_A = cls_loss_1 + norm_loss_1
+                loss_A = weighted_cls_loss_1 + norm_loss_1
                 loss_A.backward(retain_graph=False)
 
                 cls_loss_2_total = torch.tensor(0.0, device=self.device)
                 obj_count_2 = 0
-                if len(flat_masks) > 0 and  i/self.num_iterations > 0.5:
+                if len(flat_masks) > 0:
                     Bf, C, H, W = image_tensor.shape
                     # Keep num_queries safe; tokens derived from full image size
                     min_tokens = max(1, (H // 32) * (W // 32))
@@ -141,9 +151,10 @@ class Pipeline(BasePipeline):
                         outputs = self.model_2(batch_images * _m, output_hidden_states=True)
 
                         probs_2 = F.sigmoid(outputs.logits)
-                        loss_B = U.calc_cls_loss(probs_2, self.target_labels[1])
-                        loss_B.backward(retain_graph=False)
-                        cls_loss_2_total = cls_loss_2_total + loss_B.detach()
+                        raw_loss_B = U.calc_cls_loss(probs_2, self.target_labels[1])
+                        weighted_loss_B = self.cls_loss_weight_2 * raw_loss_B
+                        weighted_loss_B.backward(retain_graph=False)
+                        cls_loss_2_total = cls_loss_2_total + raw_loss_B.detach()
                         _labels2 = self.target_labels[1] if isinstance(self.target_labels[1], (list, tuple)) else []
                         _probs2 = probs_2[..., _labels2] if len(_labels2) > 0 else probs_2
                         obj_count_2 += (_probs2 > self.conf_threshold_2).sum().item()
@@ -155,7 +166,7 @@ class Pipeline(BasePipeline):
 
                 # pdb.set_trace()
                 # cls_loss_2_total = (cls_loss_2_total / obj_count_1 if obj_count_1 > 0 else torch.tensor(0.0, device=self.device))
-                total_loss = cls_loss_1 + norm_loss_1 + cls_loss_2_total
+                total_loss = weighted_cls_loss_1 + norm_loss_1 + self.cls_loss_weight_2 * cls_loss_2_total
                 
                 # print(cls_loss_1.item(), cls_loss_2.item(), obj_count_1, obj_count_2)
                 

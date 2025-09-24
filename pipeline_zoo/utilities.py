@@ -201,18 +201,48 @@ def assign_flattened_grad(param: torch.Tensor, flat_grad: torch.Tensor) -> None:
 
 
 class LossPlateauDetector:
-    """Simple moving-window plateau detector for a scalar loss.
+    """Moving-window plateau detector for a scalar loss with optional slope/relative checks.
     - window: number of recent points to monitor
-    - min_delta: minimum absolute improvement to reset patience
-    - patience: number of consecutive windows with improvement < min_delta before declaring plateau
+    - min_delta: minimum absolute improvement to reset patience (against chosen baseline)
+    - patience: number of consecutive windows meeting plateau condition before True
+    - min_rel: minimum relative improvement (fraction) to reset patience
+    - slope_thresh: if >0, require decreasing slope magnitude larger than this to avoid plateau
+    - use_window_best: compare to best within the current window instead of global best
     """
-    def __init__(self, window: int = 20, min_delta: float = 1e-4, patience: int = 3):
+    def __init__(
+        self,
+        window: int = 20,
+        min_delta: float = 1e-4,
+        patience: int = 3,
+        *,
+        min_rel: float = 0.0,
+        slope_thresh: float = 0.0,
+        use_window_best: bool = False,
+    ):
         self.window = max(1, int(window))
         self.min_delta = float(min_delta)
+        self.min_rel = float(min_rel)
+        self.slope_thresh = float(slope_thresh)
+        self.use_window_best = bool(use_window_best)
         self.patience = max(1, int(patience))
         self.buffer: list[float] = []
         self.best = float('inf')
         self.bad_windows = 0
+
+    def _slope(self) -> float:
+        # simple least-squares slope over the window
+        n = len(self.buffer)
+        if n < 2:
+            return 0.0
+        x = torch.arange(n, dtype=torch.float32)
+        y = torch.tensor(self.buffer, dtype=torch.float32)
+        xm = x.mean()
+        ym = y.mean()
+        denom = ((x - xm) ** 2).sum().item()
+        if denom <= 0:
+            return 0.0
+        slope = (((x - xm) * (y - ym)).sum().item()) / denom
+        return float(slope)
 
     def update(self, value: float) -> bool:
         """Add a loss value. Returns True if plateau detected."""
@@ -223,11 +253,26 @@ class LossPlateauDetector:
             self.buffer.pop(0)
 
         current = self.buffer[-1]
-        if self.best - current > self.min_delta:
+        baseline = (min(self.buffer) if self.use_window_best else self.best)
+        abs_improve = max(0.0, baseline - current)
+        rel_improve = 0.0
+        ref = self.buffer[0]
+        if abs(ref) > 1e-12:
+            rel_improve = max(0.0, (ref - current) / abs(ref))
+
+        slope = self._slope()
+
+        # plateau if: small absolute AND small relative improvement AND slope not meaningfully negative
+        is_plateau = (abs_improve <= self.min_delta) and (rel_improve <= self.min_rel) and (slope >= -self.slope_thresh)
+
+        # update global best tracking
+        if current < self.best - self.min_delta:
             self.best = current
-            self.bad_windows = 0
-        else:
+
+        if is_plateau:
             self.bad_windows += 1
+        else:
+            self.bad_windows = 0
         return self.bad_windows >= self.patience
 
 def debug_image_with_boxes(image_tensor, combined, thres):

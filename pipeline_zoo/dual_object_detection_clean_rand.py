@@ -6,14 +6,14 @@ import json
 import torch
 import random
 import numpy as np
-import utilities as U
+from . import utilities as U
 from tqdm import tqdm
 from pathlib import Path
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
 from datasets import load_dataset
 from collections import defaultdict
-from base_pipeline import BasePipeline
+from .base_pipeline import BasePipeline
 from transformers import RTDetrForObjectDetection, RTDetrImageProcessor
 
 class Pipeline(BasePipeline):
@@ -35,13 +35,22 @@ class Pipeline(BasePipeline):
         self.budget = config["budget"]
         # control memory use when batching model_2 inputs
         self.model2_batch_size = config.get("model2_batch_size", 8)
+        self.cls_loss_weight_1 = float(config.get("cls_loss_weight_1", 1.0))
+        self.cls_loss_weight_2 = float(config.get("cls_loss_weight_2", 1.0))
+        weight_sum = self.cls_loss_weight_1 + self.cls_loss_weight_2
+        if weight_sum <= 0:
+            self.cls_loss_weight_1 = 0.5
+            self.cls_loss_weight_2 = 0.5
+        else:
+            self.cls_loss_weight_1 /= weight_sum
+            self.cls_loss_weight_2 /= weight_sum
 
         self.log_dict = {}
         
         self.randomseed()
         
     def randomseed(self):
-        seed = config["seed"]
+        seed = self.config["seed"]
         random.seed(seed)
         np.random.seed(seed)
         torch.manual_seed(seed)
@@ -94,6 +103,7 @@ class Pipeline(BasePipeline):
                 
                 cls_loss_1  = torch.tensor(0.0, device=self.device)
                 norm_loss_1 = torch.tensor(0.0, device=self.device)
+                weighted_cls_loss_1 = self.cls_loss_weight_1 * cls_loss_1
                 # cls_loss_1  = U.calc_cls_loss(probs, self.target_labels[0])
                 # norm_loss_1 = self.calc_norm_loss(order=[""])
 
@@ -145,7 +155,7 @@ class Pipeline(BasePipeline):
 
                 # pdb.set_trace()
                 cls_loss_2 = (cls_loss_2 / obj_count_1 if obj_count_1 > 0 else torch.tensor(0.0, device=self.device))
-                total_loss = cls_loss_1 + norm_loss_1 + cls_loss_2
+                total_loss = weighted_cls_loss_1 + norm_loss_1 + self.cls_loss_weight_2 * cls_loss_2
                 # total_loss.backward(retain_graph=False)
                 
                 # print(cls_loss_1.item(), cls_loss_2.item(), obj_count_1, obj_count_2)
