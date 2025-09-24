@@ -23,11 +23,7 @@ run_main() {
   python main.py --config_file "$cfg" --pipeline_id "$pid"
 }
 
-# run_teaspoon() {
-#   local cfg="$1"; shift
-#   echo "=== Running dual_object_detection_teaspoon.py with $cfg ==="
-#   python pipeline_zoo/dual_object_detection_teaspoon.py --config_file "$cfg"
-# }
+
 
 # Pipelines to run via main.py (IDs from pipeline_zoo/zoo.py)
 # 3: dual_object_detection
@@ -37,11 +33,10 @@ run_main() {
 # 7: penalty
 MAIN_PIPELINES=(3 4 5 6 7)
 
-for cfg in "$CFG_NO_WEIGHTS" "$CFG_WEIGHTS"; do
+for cfg in "$CFG_WEIGHTS"; do
   for pid in "${MAIN_PIPELINES[@]}"; do
     run_main "$cfg" "$pid"
   done
-#   run_teaspoon "$cfg"
 done
 
 echo "All runs completed."
