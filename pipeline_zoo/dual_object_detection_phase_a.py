@@ -115,12 +115,32 @@ class Pipeline(BasePipeline):
                 _probs1 = probs[..., _labels1] if len(_labels1) > 0 else probs
                 obj_count_1 = (_probs1 > self.conf_threshold_1).sum().item()
 
-                # Build ROI pixel masks for boxes and batch model_2 over the full-size image
+                # Build ROI pixel masks for boxes; only use them to count model_2 detections (no loss/backprop)
                 roi_masks_list = U.masks_from_boxes(image_tensor, combined, self.conf_threshold_1)
-                # flatten masks across batch (usually B=1)
                 flat_masks = []
                 for masks in roi_masks_list:
                     flat_masks.extend(masks)
+                obj_count_2 = 0
+                if len(flat_masks) > 0:
+                    with torch.no_grad():
+                        full_img = image_tensor + self.bx * self.mask
+                        Bf, C, H, W = full_img.shape
+                        min_tokens = max(1, (H // 32) * (W // 32))
+                        safe_queries = max(1, min(self.num_queries_2, min_tokens))
+                        if self.model_2.config.num_queries != safe_queries:
+                            self.model_2.config.num_queries = safe_queries
+                        N = len(flat_masks)
+                        bs2 = max(1, int(self.model2_batch_size))
+                        for start in range(0, N, bs2):
+                            end = min(start + bs2, N)
+                            batch_pixel_masks = torch.stack(flat_masks[start:end], dim=0)
+                            batch_images = full_img.expand(end - start, -1, -1, -1).contiguous()
+                            _m = batch_pixel_masks.to(batch_images.dtype).unsqueeze(1).expand(-1, 3, -1, -1)
+                            outputs2 = self.model_2(batch_images * _m, output_hidden_states=False)
+                            probs2 = F.sigmoid(outputs2.logits)
+                            _labels2 = self.target_labels[1] if isinstance(self.target_labels[1], (list, tuple)) else []
+                            _probs2 = probs2[..., _labels2] if len(_labels2) > 0 else probs2
+                            obj_count_2 += (_probs2 > self.conf_threshold_2).sum().item()
 
                 if self.bx.grad is not None:
                     self.bx.grad.zero_()
@@ -128,37 +148,9 @@ class Pipeline(BasePipeline):
                 loss_A = weighted_cls_loss_1 + norm_loss_1
                 loss_A.backward(retain_graph=False)
 
+                # No B loss/updates in Phase A
                 cls_loss_2_total = torch.tensor(0.0, device=self.device)
-                obj_count_2 = 0
-                if len(flat_masks) > 0:
-                    Bf, C, H, W = image_tensor.shape
-                    # Keep num_queries safe; tokens derived from full image size
-                    min_tokens = max(1, (H // 32) * (W // 32))
-                    safe_queries = max(1, min(self.num_queries_2, min_tokens))
-                    if self.model_2.config.num_queries != safe_queries:
-                        self.model_2.config.num_queries = safe_queries
-
-                    # micro-batch to control VRAM
-                    N = len(flat_masks)
-                    bs2 = max(1, int(self.model2_batch_size))
-                    for start in range(0, N, bs2):
-                        end = min(start + bs2, N)
-                        batch_pixel_masks = torch.stack(flat_masks[start:end], dim=0)  # [n,H,W]
-                        full_img = image_tensor + self.bx * self.mask  # rebuild graph per micro-batch
-                        batch_images = full_img.expand(end - start, -1, -1, -1).contiguous()
-                        _m = batch_pixel_masks.to(batch_images.dtype).unsqueeze(1).expand(-1, 3, -1, -1)
-                        outputs = self.model_2(batch_images * _m, output_hidden_states=True)
-
-                        probs_2 = F.sigmoid(outputs.logits)
-                        raw_loss_B = U.calc_cls_loss(probs_2, self.target_labels[1])
-                        weighted_loss_B = self.cls_loss_weight_2 * raw_loss_B
-                        weighted_loss_B.backward(retain_graph=False)
-                        cls_loss_2_total = cls_loss_2_total + raw_loss_B.detach()
-                        _labels2 = self.target_labels[1] if isinstance(self.target_labels[1], (list, tuple)) else []
-                        _probs2 = probs_2[..., _labels2] if len(_labels2) > 0 else probs_2
-                        obj_count_2 += (_probs2 > self.conf_threshold_2).sum().item()
-                # cls_loss_2_total = (cls_loss_2_total / obj_count_1 if obj_count_1 > 0 else torch.tensor(0.0, device=self.device))
-                total_loss = weighted_cls_loss_1 + norm_loss_1 + self.cls_loss_weight_2 * cls_loss_2_total
+                total_loss = weighted_cls_loss_1 + norm_loss_1
                 
                 # print(cls_loss_1.item(), cls_loss_2.item(), obj_count_1, obj_count_2)
                 

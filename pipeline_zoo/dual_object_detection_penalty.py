@@ -214,13 +214,15 @@ class Pipeline(BasePipeline):
                             _probs2 = probs_2[..., _labels2] if len(_labels2) > 0 else probs_2
                             obj_count_2 += (_probs2 > self.conf_threshold_2).sum().item()
 
+                    # Augmented Lagrangian (ALM) only, without gradient projection
                     g = A_loss - torch.tensor(self.a_target, device=self.device)
                     g_pos = torch.clamp(g, min=0.0)
                     g_pos_val = float(g_pos.detach().item())
                     indicator = 1.0 if g_pos_val > 0.0 else 0.0
                     scale = (self.alm_lambda + self.alm_rho * g_pos_val) * indicator
-                    grad_proj = U.project_onto_orthogonal_complement(grad_B + grad_A * scale, [grad_A], eps=1e-12)
-                    U.assign_flattened_grad(self.bx, grad_proj.detach())
+                    # Final update direction combines B's gradient and the ALM penalty on A
+                    grad_update = grad_B + grad_A * scale
+                    U.assign_flattened_grad(self.bx, grad_update.detach())
                     cls_loss_2 = cls_loss_2_total
                     total_loss = self.cls_loss_weight_2 * cls_loss_2_total + torch.tensor(self.alm_lambda * g_pos_val + 0.5 * self.alm_rho * (g_pos_val * g_pos_val), device=self.device)
                     with torch.no_grad():

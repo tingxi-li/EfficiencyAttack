@@ -37,6 +37,8 @@ class Pipeline(BasePipeline):
         self.model2_batch_size = config.get("model2_batch_size", 8)
         self.cls_loss_weight_1 = float(config.get("cls_loss_weight_1", 1.0))
         self.cls_loss_weight_2 = float(config.get("cls_loss_weight_2", 1.0))
+        # start running model_2 after a fraction of total iters (distinguishes from Phase A)
+        self.b_start_frac = float(config.get("b_start_frac", 0.5))
         weight_sum = self.cls_loss_weight_1 + self.cls_loss_weight_2
         if weight_sum <= 0:
             self.cls_loss_weight_1 = 0.5
@@ -130,7 +132,8 @@ class Pipeline(BasePipeline):
 
                 cls_loss_2_total = torch.tensor(0.0, device=self.device)
                 obj_count_2 = 0
-                if len(flat_masks) > 0:
+                enable_b = (i + 1) / max(1, self.num_iterations) >= self.b_start_frac
+                if enable_b and len(flat_masks) > 0:
                     Bf, C, H, W = image_tensor.shape
                     # Keep num_queries safe; tokens derived from full image size
                     min_tokens = max(1, (H // 32) * (W // 32))

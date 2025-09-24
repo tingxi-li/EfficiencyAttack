@@ -114,6 +114,14 @@ class Pipeline(BasePipeline):
             self.mask =  self.get_mask(image_tensor.shape).to(self.device)
 
             self.log_dict[image_id] = []
+            # reset phase state and plateau detector per-sample
+            self.in_b_phase = False
+            self.a_plateau = U.LossPlateauDetector(
+                self.a_window, self.a_min_delta, self.a_patience,
+                min_rel=self.a_min_rel,
+                slope_thresh=self.a_slope_thresh,
+                use_window_best=self.a_use_window_best,
+            )
             a_initial_loss = None
             a_best_loss = None
             for i in range(self.num_iterations):
