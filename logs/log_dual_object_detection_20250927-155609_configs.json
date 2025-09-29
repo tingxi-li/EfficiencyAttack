@@ -1,6 +1,6 @@
 {
-    "seed":42,
-    "parallel": true,
+    "seed": 42,
+    "parallel": false,
     "num_iterations": 5000,
     "dataset_name": "coco",
     "conf_threshold_1": 0.25,
@@ -10,14 +10,23 @@
     "num_queries_1": 5,
     "num_queries_2": 5,
     "test_size": 100,
-    "adv_patch_xywh": [0.5, 0.5, 0.2, 0.2],
+    "adv_patch_xywh": [
+        0.5,
+        0.5,
+        0.2,
+        0.2
+    ],
     "target_labels": [
-        [2], 
-        [2]
+        [
+            2
+        ],
+        [
+            2
+        ]
     ],
     "learning_rate": 1.5,
-    "cls_loss_weight_1": 1.0,
-    "cls_loss_weight_2": 1.0,
+    "cls_loss_weight_1": 6,
+    "cls_loss_weight_2": 10,
     "output_log": true,
     "log_dir": "./log",
     "budget": 0.08,
@@ -26,8 +35,10 @@
     "a_phase_patience": 15,
     "a_phase_min_iters": 1500,
     "a_phase_use_window_best": true,
-    "a_phase_min_delta": 1e-4,
-    "a_phase_min_rel": 2e-3,
-    "a_phase_slope_thresh": 5e-4,
-    "a_phase_min_drop_rel": 0.05
+    "a_phase_min_delta": 0.0001,
+    "a_phase_min_rel": 0.002,
+    "a_phase_slope_thresh": 0.0005,
+    "a_phase_min_drop_rel": 0.05,
+    "pipeline_id": 3,
+    "ngpus": 2
 }

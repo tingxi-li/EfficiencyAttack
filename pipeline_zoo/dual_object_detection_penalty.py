@@ -64,9 +64,22 @@ class Pipeline(BasePipeline):
         )
         self.in_b_phase = False
         self.a_target = None
-        # ALM multipliers
+        # ALM multipliers and stabilizers
         self.alm_lambda = float(config.get("alm_lambda_init", 0.0))
         self.alm_rho = float(config.get("alm_rho_init", 1.0))
+        self.alm_penalty_step_scale = float(config.get("alm_penalty_step_scale", 0.25))
+        self.alm_grad_clip = float(config.get("alm_grad_clip", 5.0))
+        self.alm_g_tolerance = float(config.get("alm_g_tolerance", 1e-4))
+        self.alm_focus_A_when_violated = bool(config.get("alm_focus_A_when_violated", True))
+        # lambda update step and cap
+        self.alm_lambda_step = float(config.get("alm_lambda_step", self.alm_rho))
+        self.alm_lambda_max = float(config.get("alm_lambda_max", 1e4))
+
+        # PCGrad-style blending controls when secondary objective is active
+        self.projection_conflict_threshold = float(config.get("projection_conflict_threshold", 0.0))
+        self.projection_match_norm = bool(config.get("projection_match_norm", True))
+        self.b_grad_scale = float(config.get("b_grad_scale", 1.0))
+        self.projection_eps = float(config.get("projection_eps", 1e-12))
 
         self.log_dict = {}
         
@@ -181,31 +194,39 @@ class Pipeline(BasePipeline):
                     self.in_b_phase = True
                     self.a_target = (a_best_loss if a_best_loss is not None else A_loss_value) + self.a_margin
 
+                grad_B_eff_norm = torch.tensor(0.0, device=self.device)
+                grad_penalty_norm = torch.tensor(0.0, device=self.device)
+                grad_cosine = None
+                grad_final_norm = None
+
                 if not self.in_b_phase:
                     # A-phase: only minimize A_loss
                     grad_A = U.grad_wrt(self.bx, A_loss, retain_graph=False, create_graph=False)
-                    U.assign_flattened_grad(self.bx, grad_A.detach())
+                    grad_B = torch.zeros_like(grad_A)
+                    grad_penalty = torch.zeros_like(grad_A)
+                    grad_final = grad_A
+                    grad_final_norm = grad_final.norm()
+                    U.assign_flattened_grad(self.bx, grad_final.detach())
                     total_loss = A_loss
                     cls_loss_2 = torch.tensor(0.0, device=self.device)
                     obj_count_2 = 0
                 else:
-                    # B-phase: compute B, then ALM augmented objective and project gradient
+                    # B-phase: treat A as primary, blend B via PCGrad-style projection, add ALM penalty if needed
                     cls_loss_2_total = torch.tensor(0.0, device=self.device)
                     obj_count_2 = 0
                     grad_A = U.grad_wrt(self.bx, A_loss, retain_graph=False, create_graph=False)
                     grad_B = torch.zeros_like(grad_A)
-                    if len(flat_masks) > 0:
+                    num_masks = len(flat_masks)
+                    if num_masks > 0:
                         full_img = (image_tensor + self.bx * self.mask)  # [1,C,H,W]
                         Bf, C, H, W = full_img.shape
-                        # keep num_queries safe
                         min_tokens = max(1, (H // 32) * (W // 32))
                         safe_queries = max(1, min(self.num_queries_2, min_tokens))
                         if self.model_2.config.num_queries != safe_queries:
                             self.model_2.config.num_queries = safe_queries
-                        N = len(flat_masks)
                         bs2 = max(1, int(self.model2_batch_size))
-                        for start in range(0, N, bs2):
-                            end = min(start + bs2, N)
+                        for start in range(0, num_masks, bs2):
+                            end = min(start + bs2, num_masks)
                             batch_pixel_masks = torch.stack(flat_masks[start:end], dim=0)
                             batch_images = full_img.expand(end - start, -1, -1, -1).contiguous()
                             _m = batch_pixel_masks.to(batch_images.dtype).unsqueeze(1).expand(-1, 3, -1, -1)
@@ -221,19 +242,54 @@ class Pipeline(BasePipeline):
                             _probs2 = probs_2[..., _labels2] if len(_labels2) > 0 else probs_2
                             obj_count_2 += (_probs2 > self.conf_threshold_2).sum().item()
 
-                    # Augmented Lagrangian (ALM) only, without gradient projection
+                        denom = float(max(1, num_masks))
+                        grad_B = grad_B / denom
+                        cls_loss_2_total = cls_loss_2_total / denom
+
+                    eps = self.projection_eps
+                    norm_A = grad_A.norm()
+                    norm_B = grad_B.norm()
+                    grad_B_effective = torch.zeros_like(grad_A)
+                    if norm_B > eps:
+                        if norm_A > eps:
+                            grad_cosine = torch.dot(grad_A, grad_B) / (norm_A * norm_B + eps)
+                        grad_B_effective = grad_B.clone()
+                        if (norm_A > eps) and (grad_cosine is not None) and (grad_cosine <= self.projection_conflict_threshold):
+                            grad_B_effective = U.project_onto_orthogonal_complement(grad_B, [grad_A], eps=eps)
+                            norm_proj = grad_B_effective.norm()
+                            if self.projection_match_norm and norm_proj > eps:
+                                grad_B_effective = grad_B_effective * (norm_B / (norm_proj + eps))
+                        grad_B_effective = grad_B_effective * self.b_grad_scale
+                    grad_B_eff_norm = grad_B_effective.norm()
+
                     g = A_loss - torch.tensor(self.a_target, device=self.device)
                     g_pos = torch.clamp(g, min=0.0)
                     g_pos_val = float(g_pos.detach().item())
                     indicator = 1.0 if g_pos_val > 0.0 else 0.0
                     scale = (self.alm_lambda + self.alm_rho * g_pos_val) * indicator
-                    # Final update direction combines B's gradient and the ALM penalty on A
-                    grad_update = grad_B + grad_A * scale
-                    U.assign_flattened_grad(self.bx, grad_update.detach())
+                    grad_penalty = self.alm_penalty_step_scale * scale * grad_A
+                    if self.alm_focus_A_when_violated and (g_pos_val > self.alm_g_tolerance):
+                        grad_B_effective = torch.zeros_like(grad_B_effective)
+                    grad_penalty_norm = grad_penalty.norm()
+
+                    grad_final = grad_A + grad_B_effective + grad_penalty
+                    grad_final_norm = grad_final.norm()
+
+                    if self.alm_grad_clip > 0.0:
+                        gn = float(grad_final_norm.detach().item())
+                        if gn > self.alm_grad_clip:
+                            grad_final = grad_final * (self.alm_grad_clip / (gn + 1e-12))
+                            grad_final_norm = grad_final.norm()
+
+                    U.assign_flattened_grad(self.bx, grad_final.detach())
                     cls_loss_2 = cls_loss_2_total
-                    total_loss = self.cls_loss_weight_2 * cls_loss_2_total + torch.tensor(self.alm_lambda * g_pos_val + 0.5 * self.alm_rho * (g_pos_val * g_pos_val), device=self.device)
+                    penalty_value = self.alm_lambda * g_pos_val + 0.5 * self.alm_rho * (g_pos_val * g_pos_val)
+                    total_loss = self.cls_loss_weight_2 * cls_loss_2_total + torch.tensor(penalty_value, device=self.device)
                     with torch.no_grad():
-                        self.alm_lambda = max(0.0, self.alm_lambda + self.alm_rho * g_pos_val)
+                        if g_pos_val > self.alm_g_tolerance:
+                            self.alm_lambda = max(0.0, min(self.alm_lambda_max, self.alm_lambda + self.alm_lambda_step * g_pos_val))
+                        if A_loss_value + 1e-12 < (self.a_target - self.a_min_delta):
+                            self.a_target = A_loss_value + self.a_margin
                 
                 # print(cls_loss_1.item(), cls_loss_2.item(), obj_count_1, obj_count_2)
                 
@@ -255,6 +311,12 @@ class Pipeline(BasePipeline):
                     cls_loss_2=(cls_loss_2 if 'cls_loss_2' in locals() else torch.tensor(0.0, device=self.device)),
                     obj_count_2=(obj_count_2 if 'obj_count_2' in locals() else 0),
                     total_loss=total_loss,
+                    grad_A_norm=grad_A.norm() if isinstance(grad_A, torch.Tensor) else None,
+                    grad_B_norm=(grad_B.norm() if isinstance(grad_B, torch.Tensor) else None),
+                    grad_final_norm=grad_final_norm,
+                    grad_B_eff_norm=grad_B_eff_norm,
+                    grad_penalty_norm=grad_penalty_norm,
+                    grad_cosine=grad_cosine,
                     phase_flag=int(self.in_b_phase),
                     phase=float(self.in_b_phase),
                     a_drop_abs=drop_abs,

@@ -9,4 +9,6 @@ tmp/
 dataset/
 output/
 results/
-*.png
+*.json
+!*config.json
+!*configs.json

@@ -62,6 +62,12 @@ class Pipeline(BasePipeline):
         else:
             self.cls_loss_weight_1 /= weight_sum
             self.cls_loss_weight_2 /= weight_sum
+
+        # gradient projection behaviour
+        self.projection_conflict_threshold = float(config.get("projection_conflict_threshold", 0.0))
+        self.projection_match_norm = bool(config.get("projection_match_norm", True))
+        self.b_grad_scale = float(config.get("b_grad_scale", 1.0))
+        self.projection_eps = float(config.get("projection_eps", 1e-12))
         
         self.randomseed()
         
@@ -127,7 +133,7 @@ class Pipeline(BasePipeline):
             for i in range(self.num_iterations):
                 model_1_outputs = self.model_1(image_tensor + self.bx * self.mask, output_hidden_states=True)
                 probs = F.sigmoid(model_1_outputs.logits)
-                
+
                 cls_loss_1  = U.calc_cls_loss(probs, self.target_labels[0])
                 norm_loss_1 = self.calc_norm_loss(order=[""])
                 weighted_cls_loss_1 = self.cls_loss_weight_1 * cls_loss_1
@@ -174,6 +180,8 @@ class Pipeline(BasePipeline):
                 if (not self.in_b_phase) and (i >= self.a_min_iters) and plateau and drop_ok:
                     self.in_b_phase = True
 
+                grad_B_eff_norm = None
+                grad_cosine = None
                 if not self.in_b_phase:
                     # Only optimize A
                     grad_A = U.grad_wrt(self.bx, A_loss, retain_graph=False, create_graph=False)
@@ -186,7 +194,8 @@ class Pipeline(BasePipeline):
                     obj_count_2 = 0
                     grad_A = U.grad_wrt(self.bx, A_loss, retain_graph=False, create_graph=False)
                     grad_B = torch.zeros_like(grad_A)
-                    if len(flat_masks) > 0:
+                    num_masks = len(flat_masks)
+                    if num_masks > 0:
                         # replicate the perturbed full image for each mask
                         full_img = (image_tensor + self.bx * self.mask)  # [1,C,H,W]
                         Bf, C, H, W = full_img.shape
@@ -215,13 +224,35 @@ class Pipeline(BasePipeline):
                             _labels2 = self.target_labels[1] if isinstance(self.target_labels[1], (list, tuple)) else []
                             _probs2 = probs_2[..., _labels2] if len(_labels2) > 0 else probs_2
                             obj_count_2 += (_probs2 > self.conf_threshold_2).sum().item()
-
+                        denom = float(max(1, num_masks))
+                        grad_B = grad_B / denom
+                        cls_loss_2_total = cls_loss_2_total / denom
                     else:
                         cls_loss_2_total = torch.tensor(0.0, device=self.device)
                         obj_count_2 = 0
-                    grad_A_list = [grad_A]
-                    grad_B_perp = U.project_onto_orthogonal_complement(grad_B, grad_A_list, eps=1e-12)
-                    grad_final = grad_B_perp
+                    eps = self.projection_eps
+                    grad_final = grad_A.clone()
+                    grad_cosine = None
+                    grad_B_effective = grad_B
+                    grad_B_eff_norm = None
+                    norm_A = grad_A.norm()
+                    norm_B = grad_B.norm()
+                    if norm_B > eps:
+                        if norm_A > eps:
+                            grad_cosine = torch.dot(grad_A, grad_B) / (norm_A * norm_B + eps)
+                        if (norm_A > eps) and (grad_cosine is not None) and (grad_cosine <= self.projection_conflict_threshold):
+                            grad_B_effective = U.project_onto_orthogonal_complement(grad_B, [grad_A], eps=eps)
+                            norm_proj = grad_B_effective.norm()
+                            if self.projection_match_norm and norm_proj > eps:
+                                scale = norm_B / (norm_proj + eps)
+                                grad_B_effective = grad_B_effective * scale
+                        grad_B_effective = grad_B_effective * self.b_grad_scale
+                        grad_final = grad_A + grad_B_effective
+                        grad_B_eff_norm = grad_B_effective.norm()
+                    else:
+                        grad_B_effective = torch.zeros_like(grad_A)
+                        grad_B_eff_norm = grad_B_effective.norm()
+                        grad_final = grad_A
                     U.assign_flattened_grad(self.bx, grad_final.detach())
                     cls_loss_2 = cls_loss_2_total
 
@@ -247,6 +278,8 @@ class Pipeline(BasePipeline):
                     grad_A_norm=grad_A.norm() if isinstance(grad_A, torch.Tensor) else None,
                     grad_B_norm=(grad_B.norm() if isinstance(grad_B, torch.Tensor) and hasattr(grad_B, 'norm') else None),
                     grad_final_norm=grad_final.norm() if isinstance(grad_final, torch.Tensor) else None,
+                    grad_B_eff_norm=(grad_B_eff_norm if isinstance(grad_B_eff_norm, torch.Tensor) else None),
+                    grad_cosine=grad_cosine,
                     phase_flag=int(self.in_b_phase),
                     a_drop_abs=drop_abs,
                     a_drop_rel=drop_rel,
@@ -332,6 +365,8 @@ class Pipeline(BasePipeline):
         grad_A_norm=None,
         grad_B_norm=None,
         grad_final_norm=None,
+        grad_B_eff_norm=None,
+        grad_cosine=None,
         phase_flag=None,
         a_drop_abs=None,
         a_drop_rel=None,
@@ -350,6 +385,14 @@ class Pipeline(BasePipeline):
             "grad_B_norm":     self.unhook(grad_B_norm),
             "grad_final_norm": self.unhook(grad_final_norm),
         }
+
+        if grad_B_eff_norm is not None:
+            log_entry["grad_B_eff_norm"] = self.unhook(grad_B_eff_norm)
+        if grad_cosine is not None:
+            if isinstance(grad_cosine, torch.Tensor):
+                log_entry["grad_cosine"] = self.unhook(grad_cosine)
+            else:
+                log_entry["grad_cosine"] = float(grad_cosine)
 
         if phase_flag is not None:
             log_entry["phase_flag"] = int(phase_flag)
