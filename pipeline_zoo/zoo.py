@@ -5,7 +5,10 @@ from .dual_object_detection import Pipeline as P3
 from .dual_object_detection_phase_a import Pipeline as P4
 from .dual_object_detection_phase_b import Pipeline as P5
 from .dual_object_detection_gradient_projection import Pipeline as P6
+from .dual_object_detection_gradient_projection_b_primary import Pipeline as P8
 from .dual_object_detection_penalty import Pipeline as P7
+from .dual_object_detection_sweep import Pipeline as P9
+from .dual_object_detection_raja import Pipeline as P10
 
 Pipeline_dict = {
     0: P0,
@@ -15,5 +18,8 @@ Pipeline_dict = {
     4: P4,
     5: P5,
     6: P6,
-    7: P7
+    7: P7,
+    8: P8,
+    9: P9,
+    10: P10,
 }

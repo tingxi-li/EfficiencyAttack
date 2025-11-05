@@ -1,0 +1,54 @@
+{
+    "seed": 42,
+    "parallel": false,
+    "num_iterations": 200,
+    "dataset_name": "coco",
+    "conf_threshold_1": 0.25,
+    "conf_threshold_2": 0.25,
+    "hf_model_name_1": "PekingU/rtdetr_r18vd",
+    "hf_model_name_2": "PekingU/rtdetr_r18vd",
+    "num_queries_1": 25,
+    "num_queries_2": 25,
+    "test_size": 50,
+    "adv_patch_xywh": [
+        0.5,
+        0.5,
+        0.2,
+        0.2
+    ],
+    "target_labels": [
+        [
+            2
+        ],
+        [
+            2
+        ]
+    ],
+    "learning_rate": 1.5,
+    "cls_loss_weight_1": 1,
+    "cls_loss_weight_2": 16,
+    "output_log": true,
+    "log_dir": "./log",
+    "budget": 0.08,
+    "model2_batch_size": 8,
+    "a_phase_window": 20,
+    "a_phase_patience": 10,
+    "a_phase_min_iters": 100,
+    "a_phase_use_window_best": true,
+    "a_phase_min_rel": 0.005,
+    "_sweep_combo": {
+        "index": 221,
+        "total": 225,
+        "queries": [
+            25,
+            25
+        ],
+        "weights": [
+            1,
+            16
+        ],
+        "tag": "combo221_q25-25_w1-16"
+    },
+    "pipeline_id": 3,
+    "ngpus": 2
+}

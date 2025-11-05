@@ -47,7 +47,9 @@ class Pipeline(BasePipeline):
             self.cls_loss_weight_1 /= weight_sum
             self.cls_loss_weight_2 /= weight_sum
 
+        self.compute_grad_metrics = bool(config.get("compute_grad_metrics", False))
         self.log_dict = {}
+        self.log_dir = config.get("log_dir", "./logs")
         
         self.randomseed()
         
@@ -117,6 +119,15 @@ class Pipeline(BasePipeline):
                 _probs1 = probs[..., _labels1] if len(_labels1) > 0 else probs
                 obj_count_1 = (_probs1 > self.conf_threshold_1).sum().item()
 
+                grad_metrics_entry = None
+                g1_vec = None
+                g2_vec = None
+                g2_grad_accum = None
+                if self.compute_grad_metrics:
+                    g1_grad = torch.autograd.grad(cls_loss_1, self.bx, retain_graph=True, allow_unused=True)[0]
+                    if g1_grad is not None:
+                        g1_vec = g1_grad.detach().reshape(-1)
+
                 # Build ROI pixel masks for boxes and batch model_2 over the full-size image
                 roi_masks_list = U.masks_from_boxes(image_tensor, combined, self.conf_threshold_1)
                 # flatten masks across batch (usually B=1)
@@ -156,6 +167,10 @@ class Pipeline(BasePipeline):
                         probs_2 = F.sigmoid(outputs.logits)
                         raw_loss_B = U.calc_cls_loss(probs_2, self.target_labels[1])
                         weighted_loss_B = self.cls_loss_weight_2 * raw_loss_B
+                        if self.compute_grad_metrics:
+                            grad_part = torch.autograd.grad(raw_loss_B, self.bx, retain_graph=True, allow_unused=True)[0]
+                            if grad_part is not None:
+                                g2_grad_accum = grad_part if g2_grad_accum is None else g2_grad_accum + grad_part
                         weighted_loss_B.backward(retain_graph=False)
                         cls_loss_2_total = cls_loss_2_total + raw_loss_B.detach()
                         _labels2 = self.target_labels[1] if isinstance(self.target_labels[1], (list, tuple)) else []
@@ -181,8 +196,13 @@ class Pipeline(BasePipeline):
                 # prepare for next iteration
                 self.bx = self.bx.detach().requires_grad_(True)
 
+                if self.compute_grad_metrics and g1_vec is not None:
+                    if g2_grad_accum is not None:
+                        g2_vec = g2_grad_accum.detach().reshape(-1)
+                    grad_metrics_entry = self.compute_gradient_metrics(g1_vec, g2_vec)
+
                 self.update_log(image_id=image_id, iteration=i, cls_loss_1=cls_loss_1, norm_loss_1=norm_loss_1, obj_count_1=obj_count_1, \
-                    cls_loss_2=cls_loss_2_total, obj_count_2=obj_count_2, total_loss=total_loss)
+                    cls_loss_2=cls_loss_2_total, obj_count_2=obj_count_2, total_loss=total_loss, grad_metrics=grad_metrics_entry)
 
             # save final perturbed image for this sample (timestamp aligned with logs)
             try:
@@ -254,8 +274,43 @@ class Pipeline(BasePipeline):
         
         return total_norm_loss 
 
+    def compute_gradient_metrics(self, g1_vec, g2_vec):
+        metrics = {
+            "cosine": None,
+            "sign_agreement": None,
+            "norm_1": None,
+            "norm_2": None,
+            "norm_ratio": None,
+        }
+        if g1_vec is None:
+            return metrics
 
-    def update_log(self, image_id, iteration, cls_loss_1=None, cls_loss_2=None, norm_loss_1=None, norm_loss_2=None, obj_count_1=None, obj_count_2=None, total_loss=None):
+        g1_flat = g1_vec.detach().view(-1)
+        norm1 = torch.norm(g1_flat, p=2)
+        metrics["norm_1"] = float(norm1.item())
+
+        if g2_vec is not None:
+            g2_flat = g2_vec.detach().view(-1)
+            # ensure shapes align
+            min_len = min(g1_flat.numel(), g2_flat.numel())
+            if g2_flat.numel() != g1_flat.numel():
+                g2_flat = g2_flat[:min_len]
+                g1_for_ops = g1_flat[:min_len]
+            else:
+                g1_for_ops = g1_flat
+            norm2 = torch.norm(g2_flat, p=2)
+            metrics["norm_2"] = float(norm2.item())
+            eps = 1e-12
+            if norm1.item() > eps and norm2.item() > eps:
+                cosine = torch.dot(g1_for_ops, g2_flat) / (norm1 * norm2 + eps)
+                metrics["cosine"] = float(cosine.item())
+                signs_equal = torch.eq(torch.sign(g1_for_ops), torch.sign(g2_flat))
+                metrics["sign_agreement"] = float(signs_equal.float().mean().item())
+                metrics["norm_ratio"] = float((norm1 / (norm2 + eps)).item())
+        return metrics
+
+
+    def update_log(self, image_id, iteration, cls_loss_1=None, cls_loss_2=None, norm_loss_1=None, norm_loss_2=None, obj_count_1=None, obj_count_2=None, total_loss=None, grad_metrics=None):
         if self.config["output_log"] is not True: return
         log_entry = {
             "iteration": iteration,
@@ -268,13 +323,19 @@ class Pipeline(BasePipeline):
             "total_loss":  self.unhook(total_loss),
         }
 
+        if grad_metrics is not None:
+            log_entry["grad_metrics"] = {
+                key: (None if value is None else float(value))
+                for key, value in grad_metrics.items()
+            }
+
         self.log_dict[image_id].append(log_entry)
         
         
     def write_log(self, log_path=None):
         if self.config["output_log"] is not True: return
         if log_path is None:
-            log_path = "./logs"
+            log_path = self.log_dir
         os.makedirs(log_path, exist_ok=True)
         
         # use the same timestamp as run_attack for consistency

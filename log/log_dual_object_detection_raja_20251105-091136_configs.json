@@ -1,0 +1,38 @@
+{
+    "seed": 42,
+    "parallel": false,
+    "dataset_name": "coco",
+    "test_size": 8,
+    "hf_model_name_1": "PekingU/rtdetr_r18vd",
+    "hf_model_name_2": "PekingU/rtdetr_r18vd",
+    "num_queries_1": 25,
+    "num_queries_2": 25,
+    "conf_threshold_1": 0.25,
+    "conf_threshold_2": 0.25,
+    "target_labels": [
+        [
+            2
+        ],
+        [
+            2
+        ]
+    ],
+    "log_dir": "./log",
+    "raja_norm": "l2",
+    "raja_steps": 200,
+    "raja_eps": 0.0157,
+    "raja_momentum": 0.0,
+    "raja_topk": 200,
+    "raja_score_thresh": 0.03,
+    "raja_nms_iou": 0.6,
+    "raja_roi_size": 224,
+    "raja_eot_k": 4,
+    "raja_jitter_center": 0.02,
+    "raja_jitter_size": 0.04,
+    "raja_log_grad_decomp": true,
+    "raja_save_images": true,
+    "raja_hinge_weight_stage1": 0.5,
+    "raja_hinge_weight_stage2": 0.3,
+    "raja_hinge_topk": 100,
+    "pipeline_id": 10
+}

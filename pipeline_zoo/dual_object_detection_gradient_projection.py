@@ -19,7 +19,7 @@ from transformers import RTDetrForObjectDetection, RTDetrImageProcessor
 class Pipeline(BasePipeline):
     def __init__(self, config, device=None):
         self.device = device
-        
+
         self.config = config
         self.num_iterations = config["num_iterations"]
         self.dataset_name = config["dataset_name"]
@@ -35,11 +35,29 @@ class Pipeline(BasePipeline):
         self.budget = config["budget"]
         # control memory use when batching model_2 inputs
         self.model2_batch_size = config.get("model2_batch_size", 8)
-        # A-phase stabilization settings
+        # A-phase stabilization settings (support absolute or fraction-based specs)
         self.a_window = config.get("a_phase_window", 20)
         self.a_min_delta = float(config.get("a_phase_min_delta", 0.0))
         self.a_patience = int(config.get("a_phase_patience", 3))
         self.a_min_iters = int(config.get("a_phase_min_iters", 10))
+
+        # Optional fraction-based overrides that scale with total iterations
+        # If provided, they take precedence and are resolved to absolute integers here.
+        try:
+            n_total = int(self.num_iterations)
+            win_frac = config.get("a_phase_window_frac", None)
+            if win_frac is not None:
+                self.a_window = max(5, int(round(float(win_frac) * n_total)))
+            pat_frac = config.get("a_phase_patience_frac", None)
+            if pat_frac is not None:
+                # patience counts windows; scale w.r.t. window length
+                self.a_patience = max(1, int(round(float(pat_frac) * self.a_window)))
+            min_iters_frac = config.get("a_phase_min_iters_frac", None)
+            if min_iters_frac is not None:
+                self.a_min_iters = max(1, int(round(float(min_iters_frac) * n_total)))
+        except Exception:
+            # Fallback to provided absolute values if any conversion fails
+            pass
         self.a_min_rel = float(self.config.get("a_phase_min_rel", 0.0))
         self.a_slope_thresh = float(self.config.get("a_phase_slope_thresh", 0.0))
         self.a_use_window_best = bool(self.config.get("a_phase_use_window_best", True))
@@ -69,6 +87,14 @@ class Pipeline(BasePipeline):
         self.b_grad_scale = float(config.get("b_grad_scale", 1.0))
         self.projection_eps = float(config.get("projection_eps", 1e-12))
         
+        # record resolved values for reproducibility in logs
+        try:
+            self.config["a_phase_window_resolved"] = int(self.a_window)
+            self.config["a_phase_patience_resolved"] = int(self.a_patience)
+            self.config["a_phase_min_iters_resolved"] = int(self.a_min_iters)
+        except Exception:
+            pass
+
         self.randomseed()
         
     def randomseed(self):
@@ -232,7 +258,6 @@ class Pipeline(BasePipeline):
                         obj_count_2 = 0
                     eps = self.projection_eps
                     grad_final = grad_A.clone()
-                    grad_cosine = None
                     grad_B_effective = grad_B
                     grad_B_eff_norm = None
                     norm_A = grad_A.norm()
@@ -396,7 +421,6 @@ class Pipeline(BasePipeline):
 
         if phase_flag is not None:
             log_entry["phase_flag"] = int(phase_flag)
-            log_entry["phase"] = float(phase_flag)
         if a_drop_abs is not None:
             log_entry["a_drop_abs"] = float(a_drop_abs)
         if a_drop_rel is not None:

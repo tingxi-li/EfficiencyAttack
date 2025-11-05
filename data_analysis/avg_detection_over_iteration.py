@@ -16,7 +16,7 @@ def parse_args():
     parser.add_argument("--base_dir", type=str, default="./logs/", help="path to log directory")
     parser.add_argument("--output_dir", type=str, default="./vis", help="Output directory for the plot")
     parser.add_argument("--log_file_index", type=int, default=None, help="Optional: only process this file index (sorted)")
-
+    parser.add_argument("--log_file_name", type=str, default=None, help="Optional: only process this specific log file name")
     return parser.parse_args()
 
 
