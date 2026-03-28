@@ -1,25 +1,15 @@
-from .dual_object_detection_clean import Pipeline as P0
-from .dual_object_detection_clean_rand import Pipeline as P1
-from .dual_object_detection_clean_randn import Pipeline as P2
-from .dual_object_detection import Pipeline as P3
-from .dual_object_detection_phase_a import Pipeline as P4
-from .dual_object_detection_phase_b import Pipeline as P5
-from .dual_object_detection_gradient_projection import Pipeline as P6
-from .dual_object_detection_gradient_projection_b_primary import Pipeline as P8
-from .dual_object_detection_penalty import Pipeline as P7
-from .dual_object_detection_sweep import Pipeline as P9
-from .dual_object_detection_raja import Pipeline as P10
+from .pipeline_baseline import Pipeline as P0
+from .pipeline_phase_a import Pipeline as P1
+from .pipeline_phase_b import Pipeline as P2
+from .pipeline_plateau_projection import Pipeline as P3
+from .pipeline_penalty import Pipeline as P4
+from .pipeline_raja import Pipeline as P5
 
 Pipeline_dict = {
-    0: P0,
-    1: P1,
-    2: P2,
-    3: P3,
-    4: P4,
-    5: P5,
-    6: P6,
-    7: P7,
-    8: P8,
-    9: P9,
-    10: P10,
+    0: P0,  # PipelineBaseline
+    1: P1,  # PipelinePhaseA
+    2: P2,  # PipelinePhaseB
+    3: P3,  # PipelinePlateauProjection (primary_model=1 or 2 via config)
+    4: P4,  # PipelinePenalty
+    5: P5,  # PipelineRaja
 }
