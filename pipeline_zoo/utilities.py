@@ -5,6 +5,8 @@ import torch.nn.functional as F
 import numpy as np
 import torch
 
+GRID_SIZE = 32  # RT-DETR backbone token grid size (used for safe num_queries computation)
+
 ############################################
 # Visualization helpers (boxes, debug)
 ############################################
