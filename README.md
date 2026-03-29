@@ -2,7 +2,7 @@
 
 ---
 
-## Table 1: Number of Workload Processed by Each Component in Traffic Pipeline (A)
+## Table 1: Number of Workload Processed by Each Component in Traffic Pipeline
 
 Showing Transformer-based (Transf.) and CNN-based (CNN) results.
 
@@ -19,9 +19,7 @@ Showing Transformer-based (Transf.) and CNN-based (CNN) results.
 
 ---
 
-## Table 2: Energy Consumption of Each Component in Traffic Pipeline (A)
-
-> *Note: This table is commented out in the source file and included here for reference only.*
+## Table 2: Energy Consumption of Each Component in Traffic Pipeline
 
 Showing Transformer-based (Transf.) and CNN-based (CNN) results.
 
