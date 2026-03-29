@@ -1,6 +1,6 @@
 ### A realistic pipeline we built for evaluation
 
-[image](icml-rebuttal-figure.png)
+![image](icml-rebuttal-figure.png)
 
 ### TFLOPs of each component in the pipeline
 
