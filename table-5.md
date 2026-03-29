@@ -1,4 +1,4 @@
-## Table 5: Energy Consumption by Module and Method
+## Table 5: Energy Consumption (Joules) by Module and Method
 
 | Method | IMG | OD | FR | LPR | KR | CAP | UDP |
 |---|---|---|---|---|---|---|---|
