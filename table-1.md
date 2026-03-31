@@ -1,4 +1,4 @@
-Table 1: Per-Module Computational Cost (Traffic Monitoring Pipeline). 
+Table R1: Per-Module Computational Cost (Traffic Monitoring Pipeline). 
 
 | Module | GFLOPs |
 |---|---|
