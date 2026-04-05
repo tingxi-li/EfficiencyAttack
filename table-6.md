@@ -1,6 +1,6 @@
 **Table R6: Pipeline Performance Under Scheduling, Batching, Buffering, and Defense Configurations.** Test size: 10 images, target vulnerable dataflow: ObjectDetection → LicensePlateRecognition → KnowledgeRetrieval. conf=0.5 means detected objects with confidence below 0.5 will be rejected. buffer=100 means a queue upper bound of 100; items exceeding that limit will be dropped. batch=16 means the pipeline processes inputs in batches of 16, fetched at a time from the queue. #Drops denotes the number of detected bounding boxes dropped due to bounded buffering.
 
-| # | Config | Wall Time | Throughput | Avg E2E | P50 | P95 | P99 | LPR Workload | #Drops | Total FLOPs |
+| # | Config | Wall Time | Throughput | Avg E2E Latency | P50 | P95 | P99 | LPR Workload | #Drops | Total FLOPs |
 |:--|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
 | 1 | Clean | 17.3s | 0.578 img/s | 1.23s | 0.49s | 3.86s | 4.68s | 6 | 0 | 3.27T |
 | 2 | Attacked | 1805s | 0.006 img/s | 503.4s | 0.49s | 3.85s | 4.65s | 9,315 | 0 | 215.3T |
