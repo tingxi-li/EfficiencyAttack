@@ -1,0 +1,81 @@
+{
+    "pipeline": {
+        "total_wall_time": 54.37569113401696,
+        "eval_size": 10,
+        "throughput_img_per_sec": 0.18390570844154452
+    },
+    "per_image_latency": {
+        "avg": 21.54867946313461,
+        "min": 0.24460514809470624,
+        "max": 37.05584602802992,
+        "per_image": {
+            "0": 37.05584602802992,
+            "1": 4.553128520958126,
+            "2": 4.7207688230555505,
+            "3": 0.5904180569341406,
+            "4": 0.24460514809470624,
+            "5": 33.129786503035575,
+            "6": 32.64177633007057,
+            "7": 33.93966103903949,
+            "8": 34.48790619405918,
+            "9": 34.12289798806887
+        }
+    },
+    "flops": {
+        "components": {
+            "odStream": {
+                "flops_per_call": 153844849936,
+                "total_flops": 1538448499360,
+                "count": 10.0
+            },
+            "frStream": {
+                "flops_per_call": 2837404864,
+                "total_flops": 34048858368,
+                "count": 12.0
+            },
+            "lprStream": {
+                "flops_per_call": 22901116288,
+                "total_flops": 2839738419712,
+                "count": 124.0
+            },
+            "capStream": {
+                "flops_per_call": 373311103169,
+                "total_flops": 373311103169,
+                "count": 1.0
+            }
+        },
+        "total_flops": 4785546880609
+    },
+    "workload": {
+        "odStream": {
+            "count": 10.0,
+            "drop_count": 5452,
+            "time": 8.647104591014795
+        },
+        "frStream": {
+            "count": 12.0,
+            "drop_count": 0,
+            "time": 9.316505644004792
+        },
+        "lprStream": {
+            "count": 124.0,
+            "drop_count": 11,
+            "time": 12.916038171970285
+        },
+        "capStream": {
+            "count": 1.0,
+            "drop_count": 0,
+            "time": 7.1843739750329405
+        },
+        "krStream": {
+            "count": 125.0,
+            "drop_count": 0,
+            "time": 41.58439739001915
+        },
+        "udpStream": {
+            "count": 126.0,
+            "drop_count": 0,
+            "time": 42.11169060401153
+        }
+    }
+}

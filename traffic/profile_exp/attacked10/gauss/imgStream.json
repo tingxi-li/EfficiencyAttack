@@ -1,0 +1,25 @@
+{
+    "count": 10.0,
+    "time": 3.1049794209975516,
+    "energy": 0.14010288143425154,
+    "drop_count": 0,
+    "input_drop_total": 0,
+    "input_drop_clean": 0,
+    "input_drop_attack": 0,
+    "source_labels": {
+        "0": "attack",
+        "1": "attack",
+        "2": "attack",
+        "3": "attack",
+        "4": "attack",
+        "5": "attack",
+        "6": "attack",
+        "7": "attack",
+        "8": "attack",
+        "9": "attack"
+    },
+    "mix_mode": true,
+    "mix_ratio": 1.0,
+    "shuffle_seed": 0,
+    "input_defense": "gaussian"
+}

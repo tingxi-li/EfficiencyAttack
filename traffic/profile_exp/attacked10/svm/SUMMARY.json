@@ -1,0 +1,100 @@
+{
+    "pipeline": {
+        "total_wall_time": 529.1978579200004,
+        "eval_size": 10,
+        "throughput_img_per_sec": 0.018896523956662945
+    },
+    "per_image_latency": {
+        "avg": 406.4156316084991,
+        "min": 297.1402119179984,
+        "max": 515.6910512989998,
+        "p50": 406.4156316084991,
+        "p95": 504.7635093299497,
+        "p99": 513.5055429051898,
+        "per_image": {
+            "0": 297.1402119179984,
+            "5": 515.6910512989998
+        }
+    },
+    "flops": {
+        "components": {
+            "odStream": {
+                "flops_per_call": 153844849936,
+                "total_flops": 307689699872,
+                "count": 2.0
+            },
+            "frStream": {
+                "flops_per_call": 2837404864,
+                "total_flops": 8512214592,
+                "count": 3.0
+            },
+            "lprStream": {
+                "flops_per_call": 13226400640,
+                "total_flops": 25064029212800,
+                "count": 1895.0
+            },
+            "capStream": {
+                "flops_per_call": 0,
+                "total_flops": 0,
+                "count": 0.0
+            }
+        },
+        "total_flops": 25380231127264
+    },
+    "workload": {
+        "odStream": {
+            "count": 2.0,
+            "drop_count": 0,
+            "time": 26.694891291001113
+        },
+        "frStream": {
+            "count": 3.0,
+            "drop_count": 0,
+            "time": 26.239502166004968
+        },
+        "lprStream": {
+            "count": 1895.0,
+            "drop_count": 0,
+            "time": 289.9774069349951
+        },
+        "capStream": {
+            "count": 0.0,
+            "drop_count": 0,
+            "time": 25.43941747200006
+        },
+        "krStream": {
+            "count": 1898.0,
+            "drop_count": 0,
+            "time": 517.2292480390024
+        },
+        "udpStream": {
+            "count": 1898.0,
+            "drop_count": 0,
+            "time": 517.2204433799998
+        }
+    },
+    "input_defense": {
+        "name": "svm",
+        "input_drop_total": 8,
+        "input_drop_clean": 0,
+        "input_drop_attack": 8
+    },
+    "mix": {
+        "mode": true,
+        "ratio": 1.0,
+        "shuffle_seed": 0,
+        "source_labels": {
+            "0": "attack",
+            "1": "attack",
+            "2": "attack",
+            "3": "attack",
+            "4": "attack",
+            "5": "attack",
+            "6": "attack",
+            "7": "attack",
+            "8": "attack",
+            "9": "attack"
+        }
+    },
+    "drops_total": 8
+}

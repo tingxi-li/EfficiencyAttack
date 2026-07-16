@@ -1,0 +1,2620 @@
+[
+  {
+    "timestamp": "2026-05-04 08:11:46",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 0,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 0
+  },
+  {
+    "timestamp": "2026-05-04 08:11:47",
+    "queues": {
+      "img2od": 3,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 0,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 3
+  },
+  {
+    "timestamp": "2026-05-04 08:11:48",
+    "queues": {
+      "img2od": 5,
+      "od2fr": 3,
+      "od2lpr": 0,
+      "od2cap": 1,
+      "fr2kr": 0,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 9
+  },
+  {
+    "timestamp": "2026-05-04 08:11:49",
+    "queues": {
+      "img2od": 4,
+      "od2fr": 11,
+      "od2lpr": 0,
+      "od2cap": 2,
+      "fr2kr": 2,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 19
+  },
+  {
+    "timestamp": "2026-05-04 08:11:50",
+    "queues": {
+      "img2od": 2,
+      "od2fr": 9,
+      "od2lpr": 0,
+      "od2cap": 1,
+      "fr2kr": 5,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 18
+  },
+  {
+    "timestamp": "2026-05-04 08:11:51",
+    "queues": {
+      "img2od": 1,
+      "od2fr": 13,
+      "od2lpr": 0,
+      "od2cap": 1,
+      "fr2kr": 8,
+      "lpr2kr": 1,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 24
+  },
+  {
+    "timestamp": "2026-05-04 08:11:52",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 35,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 12,
+      "lpr2kr": 2,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 49
+  },
+  {
+    "timestamp": "2026-05-04 08:11:53",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 107,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 16,
+      "lpr2kr": 0,
+      "cap2udp": 1,
+      "kr2udp": 1
+    },
+    "total_size": 125
+  },
+  {
+    "timestamp": "2026-05-04 08:11:54",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 146,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 20,
+      "lpr2kr": 7,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 174
+  },
+  {
+    "timestamp": "2026-05-04 08:11:55",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 171,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 24,
+      "lpr2kr": 4,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 199
+  },
+  {
+    "timestamp": "2026-05-04 08:11:56",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 200,
+      "od2lpr": 11,
+      "od2cap": 0,
+      "fr2kr": 28,
+      "lpr2kr": 17,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 257
+  },
+  {
+    "timestamp": "2026-05-04 08:11:57",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 227,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 31,
+      "lpr2kr": 26,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 284
+  },
+  {
+    "timestamp": "2026-05-04 08:11:58",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 220,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 36,
+      "lpr2kr": 23,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 280
+  },
+  {
+    "timestamp": "2026-05-04 08:11:59",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 268,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 40,
+      "lpr2kr": 21,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 329
+  },
+  {
+    "timestamp": "2026-05-04 08:12:00",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 288,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 45,
+      "lpr2kr": 18,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 352
+  },
+  {
+    "timestamp": "2026-05-04 08:12:01",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 283,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 49,
+      "lpr2kr": 15,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 348
+  },
+  {
+    "timestamp": "2026-05-04 08:12:02",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 297,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 53,
+      "lpr2kr": 17,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 368
+  },
+  {
+    "timestamp": "2026-05-04 08:12:03",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 326,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 56,
+      "lpr2kr": 14,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 397
+  },
+  {
+    "timestamp": "2026-05-04 08:12:04",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 323,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 60,
+      "lpr2kr": 18,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 402
+  },
+  {
+    "timestamp": "2026-05-04 08:12:05",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 337,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 64,
+      "lpr2kr": 15,
+      "cap2udp": 1,
+      "kr2udp": 1
+    },
+    "total_size": 418
+  },
+  {
+    "timestamp": "2026-05-04 08:12:06",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 332,
+      "od2lpr": 248,
+      "od2cap": 0,
+      "fr2kr": 68,
+      "lpr2kr": 28,
+      "cap2udp": 1,
+      "kr2udp": 0
+    },
+    "total_size": 677
+  },
+  {
+    "timestamp": "2026-05-04 08:12:07",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 333,
+      "od2lpr": 217,
+      "od2cap": 0,
+      "fr2kr": 72,
+      "lpr2kr": 56,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 679
+  },
+  {
+    "timestamp": "2026-05-04 08:12:08",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 327,
+      "od2lpr": 175,
+      "od2cap": 0,
+      "fr2kr": 75,
+      "lpr2kr": 96,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 673
+  },
+  {
+    "timestamp": "2026-05-04 08:12:09",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 327,
+      "od2lpr": 126,
+      "od2cap": 0,
+      "fr2kr": 79,
+      "lpr2kr": 145,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 677
+  },
+  {
+    "timestamp": "2026-05-04 08:12:10",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 336,
+      "od2lpr": 79,
+      "od2cap": 0,
+      "fr2kr": 83,
+      "lpr2kr": 191,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 690
+  },
+  {
+    "timestamp": "2026-05-04 08:12:11",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 365,
+      "od2lpr": 32,
+      "od2cap": 0,
+      "fr2kr": 86,
+      "lpr2kr": 236,
+      "cap2udp": 1,
+      "kr2udp": 0
+    },
+    "total_size": 720
+  },
+  {
+    "timestamp": "2026-05-04 08:12:12",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 361,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 89,
+      "lpr2kr": 266,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 717
+  },
+  {
+    "timestamp": "2026-05-04 08:12:13",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 376,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 94,
+      "lpr2kr": 264,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 735
+  },
+  {
+    "timestamp": "2026-05-04 08:12:14",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 384,
+      "od2lpr": 1,
+      "od2cap": 0,
+      "fr2kr": 97,
+      "lpr2kr": 275,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 758
+  },
+  {
+    "timestamp": "2026-05-04 08:12:15",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 381,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 101,
+      "lpr2kr": 275,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 758
+  },
+  {
+    "timestamp": "2026-05-04 08:12:16",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 374,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 105,
+      "lpr2kr": 272,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 752
+  },
+  {
+    "timestamp": "2026-05-04 08:12:17",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 367,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 109,
+      "lpr2kr": 270,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 746
+  },
+  {
+    "timestamp": "2026-05-04 08:12:18",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 360,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 113,
+      "lpr2kr": 267,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 740
+  },
+  {
+    "timestamp": "2026-05-04 08:12:19",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 353,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 118,
+      "lpr2kr": 264,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 736
+  },
+  {
+    "timestamp": "2026-05-04 08:12:20",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 346,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 122,
+      "lpr2kr": 261,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 729
+  },
+  {
+    "timestamp": "2026-05-04 08:12:21",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 339,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 126,
+      "lpr2kr": 258,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 724
+  },
+  {
+    "timestamp": "2026-05-04 08:12:22",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 332,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 130,
+      "lpr2kr": 256,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 719
+  },
+  {
+    "timestamp": "2026-05-04 08:12:23",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 325,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 135,
+      "lpr2kr": 253,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 714
+  },
+  {
+    "timestamp": "2026-05-04 08:12:24",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 318,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 139,
+      "lpr2kr": 250,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 708
+  },
+  {
+    "timestamp": "2026-05-04 08:12:25",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 311,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 143,
+      "lpr2kr": 247,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 702
+  },
+  {
+    "timestamp": "2026-05-04 08:12:26",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 303,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 147,
+      "lpr2kr": 244,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 695
+  },
+  {
+    "timestamp": "2026-05-04 08:12:27",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 296,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 152,
+      "lpr2kr": 242,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 690
+  },
+  {
+    "timestamp": "2026-05-04 08:12:28",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 289,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 156,
+      "lpr2kr": 239,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 685
+  },
+  {
+    "timestamp": "2026-05-04 08:12:29",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 282,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 161,
+      "lpr2kr": 236,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 679
+  },
+  {
+    "timestamp": "2026-05-04 08:12:30",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 275,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 165,
+      "lpr2kr": 233,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 673
+  },
+  {
+    "timestamp": "2026-05-04 08:12:31",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 268,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 169,
+      "lpr2kr": 231,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 668
+  },
+  {
+    "timestamp": "2026-05-04 08:12:32",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 261,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 174,
+      "lpr2kr": 228,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 664
+  },
+  {
+    "timestamp": "2026-05-04 08:12:33",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 254,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 178,
+      "lpr2kr": 225,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 658
+  },
+  {
+    "timestamp": "2026-05-04 08:12:34",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 247,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 182,
+      "lpr2kr": 222,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 651
+  },
+  {
+    "timestamp": "2026-05-04 08:12:35",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 240,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 186,
+      "lpr2kr": 219,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 645
+  },
+  {
+    "timestamp": "2026-05-04 08:12:36",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 233,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 190,
+      "lpr2kr": 217,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 640
+  },
+  {
+    "timestamp": "2026-05-04 08:12:37",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 226,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 195,
+      "lpr2kr": 214,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 636
+  },
+  {
+    "timestamp": "2026-05-04 08:12:38",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 219,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 199,
+      "lpr2kr": 211,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 629
+  },
+  {
+    "timestamp": "2026-05-04 08:12:39",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 212,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 203,
+      "lpr2kr": 208,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 624
+  },
+  {
+    "timestamp": "2026-05-04 08:12:40",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 204,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 207,
+      "lpr2kr": 206,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 618
+  },
+  {
+    "timestamp": "2026-05-04 08:12:41",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 197,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 212,
+      "lpr2kr": 203,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 613
+  },
+  {
+    "timestamp": "2026-05-04 08:12:42",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 190,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 216,
+      "lpr2kr": 200,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 606
+  },
+  {
+    "timestamp": "2026-05-04 08:12:43",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 183,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 221,
+      "lpr2kr": 197,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 602
+  },
+  {
+    "timestamp": "2026-05-04 08:12:44",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 176,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 225,
+      "lpr2kr": 195,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 596
+  },
+  {
+    "timestamp": "2026-05-04 08:12:45",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 168,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 230,
+      "lpr2kr": 192,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 590
+  },
+  {
+    "timestamp": "2026-05-04 08:12:46",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 161,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 234,
+      "lpr2kr": 189,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 584
+  },
+  {
+    "timestamp": "2026-05-04 08:12:47",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 154,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 238,
+      "lpr2kr": 186,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 578
+  },
+  {
+    "timestamp": "2026-05-04 08:12:48",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 146,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 243,
+      "lpr2kr": 183,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 573
+  },
+  {
+    "timestamp": "2026-05-04 08:12:49",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 139,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 248,
+      "lpr2kr": 180,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 568
+  },
+  {
+    "timestamp": "2026-05-04 08:12:50",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 132,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 252,
+      "lpr2kr": 177,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 562
+  },
+  {
+    "timestamp": "2026-05-04 08:12:51",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 124,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 257,
+      "lpr2kr": 174,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 556
+  },
+  {
+    "timestamp": "2026-05-04 08:12:52",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 117,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 261,
+      "lpr2kr": 171,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 550
+  },
+  {
+    "timestamp": "2026-05-04 08:12:53",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 110,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 265,
+      "lpr2kr": 168,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 543
+  },
+  {
+    "timestamp": "2026-05-04 08:12:54",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 102,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 270,
+      "lpr2kr": 165,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 537
+  },
+  {
+    "timestamp": "2026-05-04 08:12:55",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 95,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 274,
+      "lpr2kr": 162,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 531
+  },
+  {
+    "timestamp": "2026-05-04 08:12:56",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 87,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 279,
+      "lpr2kr": 159,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 525
+  },
+  {
+    "timestamp": "2026-05-04 08:12:57",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 80,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 283,
+      "lpr2kr": 156,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 519
+  },
+  {
+    "timestamp": "2026-05-04 08:12:58",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 72,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 288,
+      "lpr2kr": 153,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 513
+  },
+  {
+    "timestamp": "2026-05-04 08:12:59",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 65,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 292,
+      "lpr2kr": 151,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 508
+  },
+  {
+    "timestamp": "2026-05-04 08:13:00",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 58,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 297,
+      "lpr2kr": 148,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 504
+  },
+  {
+    "timestamp": "2026-05-04 08:13:01",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 51,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 301,
+      "lpr2kr": 145,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 498
+  },
+  {
+    "timestamp": "2026-05-04 08:13:02",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 44,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 305,
+      "lpr2kr": 142,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 492
+  },
+  {
+    "timestamp": "2026-05-04 08:13:03",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 39,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 308,
+      "lpr2kr": 140,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 488
+  },
+  {
+    "timestamp": "2026-05-04 08:13:04",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 33,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 311,
+      "lpr2kr": 138,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 482
+  },
+  {
+    "timestamp": "2026-05-04 08:13:05",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 27,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 315,
+      "lpr2kr": 135,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 478
+  },
+  {
+    "timestamp": "2026-05-04 08:13:06",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 22,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 318,
+      "lpr2kr": 134,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 474
+  },
+  {
+    "timestamp": "2026-05-04 08:13:07",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 16,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 322,
+      "lpr2kr": 131,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 469
+  },
+  {
+    "timestamp": "2026-05-04 08:13:08",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 10,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 325,
+      "lpr2kr": 129,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 465
+  },
+  {
+    "timestamp": "2026-05-04 08:13:09",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 3,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 330,
+      "lpr2kr": 126,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 459
+  },
+  {
+    "timestamp": "2026-05-04 08:13:10",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 331,
+      "lpr2kr": 124,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 456
+  },
+  {
+    "timestamp": "2026-05-04 08:13:11",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 328,
+      "lpr2kr": 122,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 450
+  },
+  {
+    "timestamp": "2026-05-04 08:13:12",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 326,
+      "lpr2kr": 119,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 446
+  },
+  {
+    "timestamp": "2026-05-04 08:13:13",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 323,
+      "lpr2kr": 117,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 441
+  },
+  {
+    "timestamp": "2026-05-04 08:13:14",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 321,
+      "lpr2kr": 114,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 436
+  },
+  {
+    "timestamp": "2026-05-04 08:13:15",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 319,
+      "lpr2kr": 112,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 432
+  },
+  {
+    "timestamp": "2026-05-04 08:13:16",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 316,
+      "lpr2kr": 110,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 427
+  },
+  {
+    "timestamp": "2026-05-04 08:13:17",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 314,
+      "lpr2kr": 107,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 422
+  },
+  {
+    "timestamp": "2026-05-04 08:13:18",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 311,
+      "lpr2kr": 104,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 416
+  },
+  {
+    "timestamp": "2026-05-04 08:13:19",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 308,
+      "lpr2kr": 102,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 411
+  },
+  {
+    "timestamp": "2026-05-04 08:13:20",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 306,
+      "lpr2kr": 99,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 406
+  },
+  {
+    "timestamp": "2026-05-04 08:13:21",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 303,
+      "lpr2kr": 97,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 401
+  },
+  {
+    "timestamp": "2026-05-04 08:13:22",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 301,
+      "lpr2kr": 94,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 395
+  },
+  {
+    "timestamp": "2026-05-04 08:13:23",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 298,
+      "lpr2kr": 92,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 391
+  },
+  {
+    "timestamp": "2026-05-04 08:13:24",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 296,
+      "lpr2kr": 89,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 386
+  },
+  {
+    "timestamp": "2026-05-04 08:13:25",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 293,
+      "lpr2kr": 87,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 381
+  },
+  {
+    "timestamp": "2026-05-04 08:13:26",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 291,
+      "lpr2kr": 84,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 376
+  },
+  {
+    "timestamp": "2026-05-04 08:13:27",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 288,
+      "lpr2kr": 82,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 371
+  },
+  {
+    "timestamp": "2026-05-04 08:13:28",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 286,
+      "lpr2kr": 79,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 366
+  },
+  {
+    "timestamp": "2026-05-04 08:13:29",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 283,
+      "lpr2kr": 77,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 361
+  },
+  {
+    "timestamp": "2026-05-04 08:13:30",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 281,
+      "lpr2kr": 74,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 356
+  },
+  {
+    "timestamp": "2026-05-04 08:13:31",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 278,
+      "lpr2kr": 72,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 350
+  },
+  {
+    "timestamp": "2026-05-04 08:13:32",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 276,
+      "lpr2kr": 69,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 346
+  },
+  {
+    "timestamp": "2026-05-04 08:13:33",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 273,
+      "lpr2kr": 66,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 339
+  },
+  {
+    "timestamp": "2026-05-04 08:13:34",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 271,
+      "lpr2kr": 64,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 336
+  },
+  {
+    "timestamp": "2026-05-04 08:13:35",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 268,
+      "lpr2kr": 61,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 330
+  },
+  {
+    "timestamp": "2026-05-04 08:13:36",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 266,
+      "lpr2kr": 59,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 326
+  },
+  {
+    "timestamp": "2026-05-04 08:13:37",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 263,
+      "lpr2kr": 56,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 320
+  },
+  {
+    "timestamp": "2026-05-04 08:13:38",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 260,
+      "lpr2kr": 54,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 315
+  },
+  {
+    "timestamp": "2026-05-04 08:13:39",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 258,
+      "lpr2kr": 51,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 310
+  },
+  {
+    "timestamp": "2026-05-04 08:13:40",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 255,
+      "lpr2kr": 48,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 303
+  },
+  {
+    "timestamp": "2026-05-04 08:13:41",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 252,
+      "lpr2kr": 46,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 298
+  },
+  {
+    "timestamp": "2026-05-04 08:13:42",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 249,
+      "lpr2kr": 43,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 292
+  },
+  {
+    "timestamp": "2026-05-04 08:13:43",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 247,
+      "lpr2kr": 40,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 288
+  },
+  {
+    "timestamp": "2026-05-04 08:13:44",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 244,
+      "lpr2kr": 37,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 281
+  },
+  {
+    "timestamp": "2026-05-04 08:13:45",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 241,
+      "lpr2kr": 34,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 276
+  },
+  {
+    "timestamp": "2026-05-04 08:13:46",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 238,
+      "lpr2kr": 32,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 271
+  },
+  {
+    "timestamp": "2026-05-04 08:13:47",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 235,
+      "lpr2kr": 29,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 265
+  },
+  {
+    "timestamp": "2026-05-04 08:13:48",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 233,
+      "lpr2kr": 26,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 260
+  },
+  {
+    "timestamp": "2026-05-04 08:13:49",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 230,
+      "lpr2kr": 23,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 253
+  },
+  {
+    "timestamp": "2026-05-04 08:13:50",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 227,
+      "lpr2kr": 21,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 248
+  },
+  {
+    "timestamp": "2026-05-04 08:13:51",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 224,
+      "lpr2kr": 18,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 243
+  },
+  {
+    "timestamp": "2026-05-04 08:13:52",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 222,
+      "lpr2kr": 15,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 238
+  },
+  {
+    "timestamp": "2026-05-04 08:13:53",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 219,
+      "lpr2kr": 12,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 232
+  },
+  {
+    "timestamp": "2026-05-04 08:13:54",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 216,
+      "lpr2kr": 9,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 226
+  },
+  {
+    "timestamp": "2026-05-04 08:13:55",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 213,
+      "lpr2kr": 7,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 220
+  },
+  {
+    "timestamp": "2026-05-04 08:13:56",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 211,
+      "lpr2kr": 4,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 216
+  },
+  {
+    "timestamp": "2026-05-04 08:13:57",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 208,
+      "lpr2kr": 1,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 210
+  },
+  {
+    "timestamp": "2026-05-04 08:13:58",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 204,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 205
+  },
+  {
+    "timestamp": "2026-05-04 08:13:59",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 200,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 201
+  },
+  {
+    "timestamp": "2026-05-04 08:14:00",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 196,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 197
+  },
+  {
+    "timestamp": "2026-05-04 08:14:01",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 192,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 193
+  },
+  {
+    "timestamp": "2026-05-04 08:14:02",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 188,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 189
+  },
+  {
+    "timestamp": "2026-05-04 08:14:03",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 184,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 185
+  },
+  {
+    "timestamp": "2026-05-04 08:14:04",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 180,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 181
+  },
+  {
+    "timestamp": "2026-05-04 08:14:05",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 176,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 177
+  },
+  {
+    "timestamp": "2026-05-04 08:14:06",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 172,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 173
+  },
+  {
+    "timestamp": "2026-05-04 08:14:07",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 167,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 168
+  },
+  {
+    "timestamp": "2026-05-04 08:14:08",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 163,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 163
+  },
+  {
+    "timestamp": "2026-05-04 08:14:09",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 159,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 159
+  },
+  {
+    "timestamp": "2026-05-04 08:14:10",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 155,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 155
+  },
+  {
+    "timestamp": "2026-05-04 08:14:11",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 151,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 151
+  },
+  {
+    "timestamp": "2026-05-04 08:14:12",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 147,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 147
+  },
+  {
+    "timestamp": "2026-05-04 08:14:13",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 143,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 144
+  },
+  {
+    "timestamp": "2026-05-04 08:14:14",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 139,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 140
+  },
+  {
+    "timestamp": "2026-05-04 08:14:15",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 135,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 136
+  },
+  {
+    "timestamp": "2026-05-04 08:14:16",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 131,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 132
+  },
+  {
+    "timestamp": "2026-05-04 08:14:17",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 127,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 128
+  },
+  {
+    "timestamp": "2026-05-04 08:14:18",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 122,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 123
+  },
+  {
+    "timestamp": "2026-05-04 08:14:19",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 118,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 119
+  },
+  {
+    "timestamp": "2026-05-04 08:14:20",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 114,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 114
+  },
+  {
+    "timestamp": "2026-05-04 08:14:21",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 110,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 110
+  },
+  {
+    "timestamp": "2026-05-04 08:14:22",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 106,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 107
+  },
+  {
+    "timestamp": "2026-05-04 08:14:23",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 102,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 103
+  },
+  {
+    "timestamp": "2026-05-04 08:14:24",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 98,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 99
+  },
+  {
+    "timestamp": "2026-05-04 08:14:25",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 94,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 95
+  },
+  {
+    "timestamp": "2026-05-04 08:14:26",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 89,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 90
+  },
+  {
+    "timestamp": "2026-05-04 08:14:27",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 85,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 86
+  },
+  {
+    "timestamp": "2026-05-04 08:14:28",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 81,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 81
+  },
+  {
+    "timestamp": "2026-05-04 08:14:29",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 77,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 78
+  },
+  {
+    "timestamp": "2026-05-04 08:14:30",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 73,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 74
+  },
+  {
+    "timestamp": "2026-05-04 08:14:31",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 68,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 68
+  },
+  {
+    "timestamp": "2026-05-04 08:14:32",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 64,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 64
+  },
+  {
+    "timestamp": "2026-05-04 08:14:33",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 60,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 61
+  },
+  {
+    "timestamp": "2026-05-04 08:14:34",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 55,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 55
+  },
+  {
+    "timestamp": "2026-05-04 08:14:35",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 51,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 52
+  },
+  {
+    "timestamp": "2026-05-04 08:14:36",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 47,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 48
+  },
+  {
+    "timestamp": "2026-05-04 08:14:37",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 42,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 43
+  },
+  {
+    "timestamp": "2026-05-04 08:14:38",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 38,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 39
+  },
+  {
+    "timestamp": "2026-05-04 08:14:39",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 33,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 33
+  },
+  {
+    "timestamp": "2026-05-04 08:14:40",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 29,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 29
+  },
+  {
+    "timestamp": "2026-05-04 08:14:41",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 25,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 26
+  },
+  {
+    "timestamp": "2026-05-04 08:14:42",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 20,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 21
+  },
+  {
+    "timestamp": "2026-05-04 08:14:43",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 16,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 16
+  },
+  {
+    "timestamp": "2026-05-04 08:14:44",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 12,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 13
+  },
+  {
+    "timestamp": "2026-05-04 08:14:45",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 8,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 1
+    },
+    "total_size": 9
+  },
+  {
+    "timestamp": "2026-05-04 08:14:46",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 3,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 3
+  },
+  {
+    "timestamp": "2026-05-04 08:14:47",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 0,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 0
+  },
+  {
+    "timestamp": "2026-05-04 08:14:48",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 0,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 0
+  },
+  {
+    "timestamp": "2026-05-04 08:14:49",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 0,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 0
+  },
+  {
+    "timestamp": "2026-05-04 08:14:50",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 0,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 0
+  },
+  {
+    "timestamp": "2026-05-04 08:14:51",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 0,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 0
+  },
+  {
+    "timestamp": "2026-05-04 08:14:52",
+    "queues": {
+      "img2od": 0,
+      "od2fr": 0,
+      "od2lpr": 0,
+      "od2cap": 0,
+      "fr2kr": 0,
+      "lpr2kr": 0,
+      "cap2udp": 0,
+      "kr2udp": 0
+    },
+    "total_size": 0
+  }
+]

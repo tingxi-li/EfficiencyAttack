@@ -1,0 +1,422 @@
+2026-05-03 16:24:03,460 - INFO     - imgStream    : internal profiling set to False
+2026-05-03 16:24:03,460 - INFO     - odStream     : internal profiling set to False
+2026-05-03 16:24:03,460 - INFO     - frStream     : internal profiling set to False
+2026-05-03 16:24:03,460 - INFO     - lprStream    : internal profiling set to False
+2026-05-03 16:24:03,460 - INFO     - capStream    : internal profiling set to False
+2026-05-03 16:24:03,460 - INFO     - krStream     : internal profiling set to False
+2026-05-03 16:24:03,460 - INFO     - udpStream    : internal profiling set to False
+
+
+================================================================================
+|                                                                              |
+|                     Running: Traffic Monitoring Pipeline                     |
+|                                                                              |
+|                         Algorithm: None, Model ID: 0                         |
+|                                                                              |
+|                             Target Indices: none                             |
+|                                                                              |
+|                             2026-05-03 16:24:03                              |
+|                                                                              |
+================================================================================
+
+
+Number of CUDA devices: 1
+2026-05-03 16:24:06,360 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 0 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:06,403 - INFO     - imgStream    : input defense = gaussian
+2026-05-03 16:24:06,404 - INFO     - imgStream    : mix mode ratio=0.05 seed=1 -> 95 clean / 5 attack
+2026-05-03 16:24:06,404 - INFO     - imgStream    : started
+/home/lxt230026/.conda/envs/dyndl/lib/python3.10/site-packages/facenet_pytorch/models/inception_resnet_v1.py:329: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  state_dict = torch.load(cached_file)
+2026-05-03 16:24:07,151 - INFO     - frStream     : FR model loaded, model_id = vggface2
+2026-05-03 16:24:07,151 - INFO     - frStream     : started
+2026-05-03 16:24:07,199 - INFO     - krStream     : face embeddings loaded, found 1000 embeddings
+2026-05-03 16:24:07,199 - INFO     - krStream     : started
+2026-05-03 16:24:07,361 - INFO     - img2od: 5 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 0 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:07,391 - INFO     - odStream     : OD model loaded, model_id = 0
+2026-05-03 16:24:07,391 - INFO     - odStream     : started
+/home/lxt230026/EfficiencyAttack/traffic/cmpnt/c4_lpr.py:145: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  self.checkpoint = torch.load(self.model_id, map_location='cpu')
+2026-05-03 16:24:07,884 - INFO     - Using custom providers: ['CPUExecutionProvider']
+2026-05-03 16:24:07,884 - INFO     - Skipping download of 'argentinian-plates-cnn-model' model, already exists at /home/lxt230026/.cache/fast-plate-ocr/argentinian-plates-cnn-model
+2026-05-03 16:24:07,898 - INFO     - lprStream    : LPR model loaded, model_id = model_v2.pth
+2026-05-03 16:24:07,898 - INFO     - lprStream    : started
+2026-05-03 16:24:08,362 - INFO     - img2od: 10 | od2fr: 0 | od2lpr: 0 | od2cap: 1 | fr2kr: 0 | lpr2kr: 0 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:08,466 - INFO     - capStream    : CAP model loaded, model_id = microsoft/git-base
+2026-05-03 16:24:08,466 - INFO     - capStream    : started
+2026-05-03 16:24:08,559 - INFO     - udpStream    : LM model loaded, model_id = gpt2
+2026-05-03 16:24:08,560 - INFO     - udpStream    : started
+2026-05-03 16:24:09,363 - INFO     - img2od: 10 | od2fr: 0 | od2lpr: 0 | od2cap: 1 | fr2kr: 1 | lpr2kr: 0 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:10,364 - INFO     - img2od: 11 | od2fr: 92 | od2lpr: 0 | od2cap: 2 | fr2kr: 3 | lpr2kr: 0 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:11,365 - INFO     - img2od: 11 | od2fr: 136 | od2lpr: 0 | od2cap: 3 | fr2kr: 7 | lpr2kr: 5 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:12,366 - INFO     - img2od: 12 | od2fr: 178 | od2lpr: 0 | od2cap: 2 | fr2kr: 11 | lpr2kr: 13 | cap2udp: 1 | kr2udp: 1 | 
+2026-05-03 16:24:13,367 - INFO     - img2od: 12 | od2fr: 172 | od2lpr: 0 | od2cap: 0 | fr2kr: 15 | lpr2kr: 11 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:14,368 - INFO     - img2od: 12 | od2fr: 178 | od2lpr: 0 | od2cap: 0 | fr2kr: 19 | lpr2kr: 8 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:15,369 - INFO     - img2od: 13 | od2fr: 200 | od2lpr: 0 | od2cap: 0 | fr2kr: 23 | lpr2kr: 5 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:16,370 - INFO     - img2od: 13 | od2fr: 237 | od2lpr: 0 | od2cap: 0 | fr2kr: 28 | lpr2kr: 3 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:17,371 - INFO     - img2od: 13 | od2fr: 310 | od2lpr: 0 | od2cap: 0 | fr2kr: 31 | lpr2kr: 16 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:18,372 - INFO     - img2od: 14 | od2fr: 308 | od2lpr: 0 | od2cap: 0 | fr2kr: 34 | lpr2kr: 14 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:19,373 - INFO     - img2od: 14 | od2fr: 314 | od2lpr: 140 | od2cap: 0 | fr2kr: 38 | lpr2kr: 31 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:20,374 - INFO     - img2od: 15 | od2fr: 313 | od2lpr: 98 | od2cap: 0 | fr2kr: 42 | lpr2kr: 71 | cap2udp: 1 | kr2udp: 1 | 
+2026-05-03 16:24:21,375 - INFO     - img2od: 14 | od2fr: 325 | od2lpr: 55 | od2cap: 1 | fr2kr: 45 | lpr2kr: 112 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:22,376 - INFO     - img2od: 15 | od2fr: 334 | od2lpr: 795 | od2cap: 0 | fr2kr: 49 | lpr2kr: 144 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:23,377 - INFO     - img2od: 16 | od2fr: 337 | od2lpr: 777 | od2cap: 0 | fr2kr: 53 | lpr2kr: 161 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:24,378 - INFO     - img2od: 17 | od2fr: 346 | od2lpr: 759 | od2cap: 0 | fr2kr: 57 | lpr2kr: 180 | cap2udp: 1 | kr2udp: 1 | 
+2026-05-03 16:24:25,075 - INFO     - imgStream    : completed, sending END signal
+2026-05-03 16:24:25,076 - INFO     - imgStream    : shutdown
+2026-05-03 16:24:25,249 - INFO     - imgStream    : shutdown successful
+2026-05-03 16:24:25,379 - INFO     - img2od: 16 | od2fr: 358 | od2lpr: 737 | od2cap: 1 | fr2kr: 61 | lpr2kr: 199 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:26,380 - INFO     - img2od: 12 | od2fr: 357 | od2lpr: 715 | od2cap: 0 | fr2kr: 65 | lpr2kr: 219 | cap2udp: 1 | kr2udp: 1 | 
+2026-05-03 16:24:27,381 - INFO     - img2od: 7 | od2fr: 374 | od2lpr: 759 | od2cap: 0 | fr2kr: 69 | lpr2kr: 247 | cap2udp: 1 | kr2udp: 1 | 
+2026-05-03 16:24:28,382 - INFO     - img2od: 2 | od2fr: 373 | od2lpr: 739 | od2cap: 0 | fr2kr: 73 | lpr2kr: 269 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:28,640 - INFO     - odStream     : Received END signal, shutting down
+2026-05-03 16:24:28,644 - INFO     - capStream    : Received END signal, shutting down
+2026-05-03 16:24:28,699 - INFO     - udpStream    : Received end signal from CAP
+2026-05-03 16:24:28,903 - INFO     - odStream     : shutdown successful
+2026-05-03 16:24:29,248 - INFO     - capStream    : shutdown successful
+2026-05-03 16:24:29,383 - INFO     - img2od: 0 | od2fr: 370 | od2lpr: 696 | od2cap: 0 | fr2kr: 76 | lpr2kr: 310 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:30,383 - INFO     - img2od: 0 | od2fr: 364 | od2lpr: 632 | od2cap: 0 | fr2kr: 80 | lpr2kr: 372 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:31,385 - INFO     - img2od: 0 | od2fr: 358 | od2lpr: 553 | od2cap: 0 | fr2kr: 84 | lpr2kr: 449 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:32,386 - INFO     - img2od: 0 | od2fr: 352 | od2lpr: 463 | od2cap: 0 | fr2kr: 87 | lpr2kr: 535 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:33,387 - INFO     - img2od: 0 | od2fr: 346 | od2lpr: 376 | od2cap: 0 | fr2kr: 90 | lpr2kr: 620 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:34,388 - INFO     - img2od: 0 | od2fr: 340 | od2lpr: 290 | od2cap: 0 | fr2kr: 94 | lpr2kr: 703 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:35,389 - INFO     - img2od: 0 | od2fr: 334 | od2lpr: 207 | od2cap: 0 | fr2kr: 97 | lpr2kr: 783 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:36,390 - INFO     - img2od: 0 | od2fr: 327 | od2lpr: 145 | od2cap: 0 | fr2kr: 101 | lpr2kr: 843 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:37,391 - INFO     - img2od: 0 | od2fr: 321 | od2lpr: 79 | od2cap: 0 | fr2kr: 106 | lpr2kr: 907 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:38,392 - INFO     - img2od: 0 | od2fr: 315 | od2lpr: 22 | od2cap: 0 | fr2kr: 109 | lpr2kr: 962 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:38,723 - INFO     - lprStream    : Received END signal, shutting down
+2026-05-03 16:24:38,862 - INFO     - lprStream    : shutdown successful
+2026-05-03 16:24:39,393 - INFO     - img2od: 0 | od2fr: 309 | od2lpr: 0 | od2cap: 0 | fr2kr: 113 | lpr2kr: 982 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:40,394 - INFO     - img2od: 0 | od2fr: 302 | od2lpr: 0 | od2cap: 0 | fr2kr: 117 | lpr2kr: 980 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:41,395 - INFO     - img2od: 0 | od2fr: 295 | od2lpr: 0 | od2cap: 0 | fr2kr: 122 | lpr2kr: 977 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:42,396 - INFO     - img2od: 0 | od2fr: 288 | od2lpr: 0 | od2cap: 0 | fr2kr: 126 | lpr2kr: 974 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:43,398 - INFO     - img2od: 0 | od2fr: 281 | od2lpr: 0 | od2cap: 0 | fr2kr: 130 | lpr2kr: 971 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:44,399 - INFO     - img2od: 0 | od2fr: 274 | od2lpr: 0 | od2cap: 0 | fr2kr: 134 | lpr2kr: 969 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:45,400 - INFO     - img2od: 0 | od2fr: 267 | od2lpr: 0 | od2cap: 0 | fr2kr: 138 | lpr2kr: 966 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:46,401 - INFO     - img2od: 0 | od2fr: 259 | od2lpr: 0 | od2cap: 0 | fr2kr: 143 | lpr2kr: 963 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:47,402 - INFO     - img2od: 0 | od2fr: 253 | od2lpr: 0 | od2cap: 0 | fr2kr: 147 | lpr2kr: 960 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:48,403 - INFO     - img2od: 0 | od2fr: 245 | od2lpr: 0 | od2cap: 0 | fr2kr: 151 | lpr2kr: 957 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:49,404 - INFO     - img2od: 0 | od2fr: 238 | od2lpr: 0 | od2cap: 0 | fr2kr: 156 | lpr2kr: 955 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:50,405 - INFO     - img2od: 0 | od2fr: 231 | od2lpr: 0 | od2cap: 0 | fr2kr: 160 | lpr2kr: 952 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:51,407 - INFO     - img2od: 0 | od2fr: 224 | od2lpr: 0 | od2cap: 0 | fr2kr: 165 | lpr2kr: 949 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:52,408 - INFO     - img2od: 0 | od2fr: 217 | od2lpr: 0 | od2cap: 0 | fr2kr: 169 | lpr2kr: 946 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:53,409 - INFO     - img2od: 0 | od2fr: 210 | od2lpr: 0 | od2cap: 0 | fr2kr: 173 | lpr2kr: 943 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:54,410 - INFO     - img2od: 0 | od2fr: 203 | od2lpr: 0 | od2cap: 0 | fr2kr: 177 | lpr2kr: 941 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:55,412 - INFO     - img2od: 0 | od2fr: 196 | od2lpr: 0 | od2cap: 0 | fr2kr: 181 | lpr2kr: 938 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:56,413 - INFO     - img2od: 0 | od2fr: 189 | od2lpr: 0 | od2cap: 0 | fr2kr: 186 | lpr2kr: 935 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:24:57,414 - INFO     - img2od: 0 | od2fr: 182 | od2lpr: 0 | od2cap: 0 | fr2kr: 190 | lpr2kr: 932 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:58,415 - INFO     - img2od: 0 | od2fr: 175 | od2lpr: 0 | od2cap: 0 | fr2kr: 194 | lpr2kr: 929 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:24:59,417 - INFO     - img2od: 0 | od2fr: 168 | od2lpr: 0 | od2cap: 0 | fr2kr: 198 | lpr2kr: 927 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:00,418 - INFO     - img2od: 0 | od2fr: 161 | od2lpr: 0 | od2cap: 0 | fr2kr: 202 | lpr2kr: 924 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:01,419 - INFO     - img2od: 0 | od2fr: 154 | od2lpr: 0 | od2cap: 0 | fr2kr: 207 | lpr2kr: 921 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:02,420 - INFO     - img2od: 0 | od2fr: 147 | od2lpr: 0 | od2cap: 0 | fr2kr: 211 | lpr2kr: 918 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:03,422 - INFO     - img2od: 0 | od2fr: 140 | od2lpr: 0 | od2cap: 0 | fr2kr: 215 | lpr2kr: 915 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:04,423 - INFO     - img2od: 0 | od2fr: 133 | od2lpr: 0 | od2cap: 0 | fr2kr: 219 | lpr2kr: 913 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:05,424 - INFO     - img2od: 0 | od2fr: 126 | od2lpr: 0 | od2cap: 0 | fr2kr: 223 | lpr2kr: 910 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:06,425 - INFO     - img2od: 0 | od2fr: 119 | od2lpr: 0 | od2cap: 0 | fr2kr: 228 | lpr2kr: 907 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:07,426 - INFO     - img2od: 0 | od2fr: 112 | od2lpr: 0 | od2cap: 0 | fr2kr: 232 | lpr2kr: 904 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:08,428 - INFO     - img2od: 0 | od2fr: 105 | od2lpr: 0 | od2cap: 0 | fr2kr: 236 | lpr2kr: 901 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:09,429 - INFO     - img2od: 0 | od2fr: 98 | od2lpr: 0 | od2cap: 0 | fr2kr: 240 | lpr2kr: 899 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:10,430 - INFO     - img2od: 0 | od2fr: 91 | od2lpr: 0 | od2cap: 0 | fr2kr: 245 | lpr2kr: 896 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:11,431 - INFO     - img2od: 0 | od2fr: 84 | od2lpr: 0 | od2cap: 0 | fr2kr: 249 | lpr2kr: 893 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:12,432 - INFO     - img2od: 0 | od2fr: 77 | od2lpr: 0 | od2cap: 0 | fr2kr: 253 | lpr2kr: 890 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:13,433 - INFO     - img2od: 0 | od2fr: 70 | od2lpr: 0 | od2cap: 0 | fr2kr: 257 | lpr2kr: 887 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:14,434 - INFO     - img2od: 0 | od2fr: 63 | od2lpr: 0 | od2cap: 0 | fr2kr: 261 | lpr2kr: 885 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:15,435 - INFO     - img2od: 0 | od2fr: 56 | od2lpr: 0 | od2cap: 0 | fr2kr: 266 | lpr2kr: 882 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:16,437 - INFO     - img2od: 0 | od2fr: 49 | od2lpr: 0 | od2cap: 0 | fr2kr: 270 | lpr2kr: 879 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:17,438 - INFO     - img2od: 0 | od2fr: 42 | od2lpr: 0 | od2cap: 0 | fr2kr: 274 | lpr2kr: 876 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:18,439 - INFO     - img2od: 0 | od2fr: 34 | od2lpr: 0 | od2cap: 0 | fr2kr: 278 | lpr2kr: 874 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:19,440 - INFO     - img2od: 0 | od2fr: 27 | od2lpr: 0 | od2cap: 0 | fr2kr: 283 | lpr2kr: 871 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:20,441 - INFO     - img2od: 0 | od2fr: 20 | od2lpr: 0 | od2cap: 0 | fr2kr: 288 | lpr2kr: 868 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:21,442 - INFO     - img2od: 0 | od2fr: 13 | od2lpr: 0 | od2cap: 0 | fr2kr: 292 | lpr2kr: 865 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:22,444 - INFO     - img2od: 0 | od2fr: 6 | od2lpr: 0 | od2cap: 0 | fr2kr: 296 | lpr2kr: 862 | cap2udp: 0 | kr2udp: 0 | 
+loading model on device: cuda
+Initializing checkpoint: PekingU/rtdetr_r50vd, ID: 0
+2026-05-03 16:25:23,277 - INFO     - frStream     : Received END signal, shutting down
+2026-05-03 16:25:23,445 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 299 | lpr2kr: 860 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:23,470 - INFO     - frStream     : shutdown successful
+2026-05-03 16:25:24,446 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 296 | lpr2kr: 857 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:25,447 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 293 | lpr2kr: 854 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:26,449 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 291 | lpr2kr: 851 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:27,450 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 288 | lpr2kr: 848 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:28,451 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 285 | lpr2kr: 845 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:29,452 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 282 | lpr2kr: 842 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:30,453 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 279 | lpr2kr: 839 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:31,455 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 276 | lpr2kr: 836 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:32,456 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 273 | lpr2kr: 833 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:33,457 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 270 | lpr2kr: 830 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:34,458 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 267 | lpr2kr: 828 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:35,460 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 264 | lpr2kr: 825 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:36,461 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 261 | lpr2kr: 822 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:37,462 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 258 | lpr2kr: 819 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:38,463 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 256 | lpr2kr: 816 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:39,464 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 253 | lpr2kr: 813 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:40,465 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 250 | lpr2kr: 810 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:41,467 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 247 | lpr2kr: 807 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:42,468 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 244 | lpr2kr: 804 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:43,469 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 241 | lpr2kr: 801 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:44,470 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 238 | lpr2kr: 798 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:45,471 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 235 | lpr2kr: 795 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:46,473 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 232 | lpr2kr: 793 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:47,474 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 229 | lpr2kr: 790 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:48,475 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 226 | lpr2kr: 787 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:49,476 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 224 | lpr2kr: 784 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:50,478 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 221 | lpr2kr: 781 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:51,479 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 218 | lpr2kr: 778 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:52,480 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 215 | lpr2kr: 775 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:25:53,481 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 212 | lpr2kr: 772 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:54,483 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 209 | lpr2kr: 769 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:55,484 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 206 | lpr2kr: 766 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:56,485 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 203 | lpr2kr: 763 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:57,486 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 200 | lpr2kr: 761 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:58,488 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 197 | lpr2kr: 758 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:25:59,489 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 194 | lpr2kr: 755 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:00,490 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 191 | lpr2kr: 752 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:01,491 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 189 | lpr2kr: 749 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:02,493 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 186 | lpr2kr: 746 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:03,494 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 183 | lpr2kr: 743 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:04,495 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 180 | lpr2kr: 740 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:05,496 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 177 | lpr2kr: 737 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:06,497 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 174 | lpr2kr: 734 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:07,499 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 171 | lpr2kr: 731 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:08,500 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 168 | lpr2kr: 728 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:09,501 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 165 | lpr2kr: 726 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:10,502 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 162 | lpr2kr: 723 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:11,504 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 159 | lpr2kr: 720 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:12,505 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 156 | lpr2kr: 717 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:13,506 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 154 | lpr2kr: 714 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:14,507 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 151 | lpr2kr: 711 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:15,509 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 148 | lpr2kr: 708 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:16,510 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 145 | lpr2kr: 705 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:17,511 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 142 | lpr2kr: 702 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:18,512 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 139 | lpr2kr: 699 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:19,513 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 136 | lpr2kr: 697 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:20,514 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 133 | lpr2kr: 694 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:21,515 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 130 | lpr2kr: 691 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:22,517 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 127 | lpr2kr: 688 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:23,518 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 125 | lpr2kr: 685 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:24,519 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 122 | lpr2kr: 682 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:25,520 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 119 | lpr2kr: 679 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:26,521 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 116 | lpr2kr: 676 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:27,523 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 113 | lpr2kr: 673 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:28,524 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 110 | lpr2kr: 670 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:29,525 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 107 | lpr2kr: 667 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:30,526 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 104 | lpr2kr: 664 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:31,528 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 101 | lpr2kr: 662 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:32,529 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 98 | lpr2kr: 659 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:33,530 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 95 | lpr2kr: 656 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:34,531 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 93 | lpr2kr: 653 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:35,533 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 90 | lpr2kr: 650 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:36,534 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 87 | lpr2kr: 647 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:37,535 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 84 | lpr2kr: 644 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:38,536 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 81 | lpr2kr: 641 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:39,537 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 78 | lpr2kr: 639 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:40,538 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 75 | lpr2kr: 636 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:41,539 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 72 | lpr2kr: 633 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:42,541 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 70 | lpr2kr: 630 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:43,542 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 67 | lpr2kr: 627 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:44,543 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 64 | lpr2kr: 624 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:45,544 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 61 | lpr2kr: 621 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:46,546 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 58 | lpr2kr: 618 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:47,547 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 55 | lpr2kr: 615 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:48,548 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 52 | lpr2kr: 612 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:49,549 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 49 | lpr2kr: 610 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:50,551 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 46 | lpr2kr: 607 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:51,552 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 43 | lpr2kr: 604 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:52,553 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 40 | lpr2kr: 601 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:53,554 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 38 | lpr2kr: 598 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:54,555 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 35 | lpr2kr: 595 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:55,557 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 32 | lpr2kr: 592 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:56,558 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 29 | lpr2kr: 589 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:26:57,559 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 26 | lpr2kr: 586 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:58,561 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 23 | lpr2kr: 583 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:26:59,562 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 20 | lpr2kr: 580 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:00,563 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 17 | lpr2kr: 578 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:01,564 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 14 | lpr2kr: 575 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:02,565 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 11 | lpr2kr: 572 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:03,567 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 9 | lpr2kr: 569 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:04,568 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 6 | lpr2kr: 566 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:05,569 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 3 | lpr2kr: 563 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:06,384 - INFO     - krStream     : Received end signal from FR
+2026-05-03 16:27:06,570 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 560 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:07,572 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 555 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:08,573 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 551 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:09,574 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 547 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:10,575 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 542 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:11,577 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 538 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:12,578 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 533 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:13,579 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 529 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:14,580 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 525 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:15,582 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 520 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:16,583 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 516 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:17,584 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 512 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:18,585 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 507 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:19,586 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 503 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:20,588 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 499 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:21,589 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 494 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:22,590 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 490 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:23,591 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 485 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:24,593 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 481 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:25,594 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 477 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:26,595 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 472 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:27,596 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 468 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:28,598 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 463 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:29,599 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 459 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:30,600 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 454 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:31,601 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 450 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:32,603 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 446 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:33,604 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 441 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:34,605 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 437 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:35,606 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 433 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:36,608 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 428 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:37,609 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 424 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:38,610 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 420 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:39,611 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 415 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:40,612 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 411 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:41,614 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 406 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:42,615 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 402 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:43,616 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 398 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:44,617 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 393 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:45,619 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 389 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:46,620 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 385 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:47,621 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 380 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:48,622 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 376 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:49,624 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 371 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:50,625 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 367 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:51,626 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 363 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:52,627 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 358 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:53,628 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 354 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:54,629 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 350 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:55,630 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 345 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:56,631 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 341 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:57,633 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 336 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:27:58,634 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 332 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:27:59,635 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 328 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:00,636 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 323 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:01,638 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 319 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:02,639 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 314 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:03,640 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 309 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:04,641 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 304 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:05,643 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 299 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:06,644 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 294 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:07,645 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 290 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:08,646 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 285 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:09,648 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 280 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:10,649 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 275 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:11,650 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 270 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:12,651 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 265 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:13,653 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 260 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:14,654 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 255 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:15,655 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 251 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:16,656 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 246 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:17,657 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 241 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:18,659 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 237 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:19,660 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 232 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:20,661 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 228 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:21,662 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 224 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:22,664 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 220 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:23,665 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 217 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:24,666 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 213 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:25,667 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 209 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:26,668 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 205 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:27,669 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 201 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:28,670 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 198 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:29,671 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 194 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:30,672 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 190 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:31,673 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 186 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:32,674 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 183 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:33,675 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 179 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:34,676 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 176 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:35,677 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 172 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:36,678 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 169 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:37,679 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 165 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:38,680 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 162 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:39,681 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 158 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:40,682 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 154 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:41,683 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 151 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:42,684 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 147 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:43,685 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 144 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:44,686 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 140 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:45,687 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 136 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:46,688 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 133 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:47,689 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 129 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:48,690 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 126 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:49,691 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 122 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:50,692 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 118 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:51,693 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 115 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:52,694 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 112 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:53,695 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 109 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:54,697 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 104 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:55,698 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 100 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:56,699 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 96 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:28:57,700 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 92 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:58,701 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 88 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:28:59,702 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 83 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:00,703 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 79 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:29:01,704 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 75 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:29:02,705 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 71 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:03,706 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 67 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:04,707 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 62 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:05,709 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 58 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:29:06,710 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 54 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:07,711 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 50 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:08,712 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 45 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:09,713 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 41 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:29:10,714 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 37 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:11,715 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 33 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:12,716 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 29 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:13,718 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 24 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:14,719 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 20 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:15,720 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 16 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:16,721 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 11 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:17,723 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 7 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:18,724 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 3 | cap2udp: 0 | kr2udp: 1 | 
+2026-05-03 16:29:19,309 - INFO     - krStream     : Received end signal from LPR
+2026-05-03 16:29:19,427 - INFO     - krStream     : Received BOTH END signal, shutting down
+2026-05-03 16:29:19,557 - INFO     - udpStream    : Received end signal from KR
+2026-05-03 16:29:19,572 - INFO     - krStream     : shutdown successful
+2026-05-03 16:29:19,680 - INFO     - udpStream    : Received BOTH END signal, shutting down
+2026-05-03 16:29:19,725 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 0 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:29:20,037 - INFO     - udpStream    : shutdown successful
+2026-05-03 16:29:20,726 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 0 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:29:21,727 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 0 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:29:22,729 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 0 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:29:23,730 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 0 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:29:24,731 - INFO     - img2od: 0 | od2fr: 0 | od2lpr: 0 | od2cap: 0 | fr2kr: 0 | lpr2kr: 0 | cap2udp: 0 | kr2udp: 0 | 
+2026-05-03 16:29:25,732 - INFO     - All queues empty, job done
+2026-05-03 16:29:25,735 - INFO     - Queue logs written to ./profile_exp/mix/r0.05/def_gaussian/seed1/QUEUEWATCH.json
+2026-05-03 16:29:26,372 - INFO     - Reach FINALLY block in MAIN process
+2026-05-03 16:29:26,372 - INFO     - Starting cleanup of 7 processes.
+2026-05-03 16:29:26,373 - INFO     - Draining and closing 8 queues.
+2026-05-03 16:29:26,373 - INFO     - Starting cleanup for queue 0, queue size: 0.
+2026-05-03 16:29:26,373 - INFO     - Starting cleanup for queue 1, queue size: 0.
+2026-05-03 16:29:26,373 - INFO     - Starting cleanup for queue 2, queue size: 0.
+2026-05-03 16:29:26,373 - INFO     - Starting cleanup for queue 3, queue size: 0.
+2026-05-03 16:29:26,373 - INFO     - Starting cleanup for queue 4, queue size: 0.
+2026-05-03 16:29:26,373 - INFO     - Starting cleanup for queue 5, queue size: 0.
+2026-05-03 16:29:26,373 - INFO     - Starting cleanup for queue 6, queue size: 0.
+2026-05-03 16:29:26,373 - INFO     - Starting cleanup for queue 7, queue size: 0.
+2026-05-03 16:29:26,373 - INFO     - Cleanup complete.
+2026-05-03 16:29:26,373 - INFO     - Cleaned up resources in MAIN process
+2026-05-03 16:29:26,374 - INFO     - Summary written to ./profile_exp/mix/r0.05/def_gaussian/seed1/SUMMARY.json
+
+======================================================================
+PROFILING SUMMARY
+======================================================================
+  Total wall time:    323.04s
+  Images processed:   100
+  Throughput:         0.3096 img/s
+  Avg E2E latency:    69.6678s
+  Min E2E latency:    0.0216s
+  Max E2E latency:    291.6761s
+
+  Component          Count  Dropped     FLOPs/call    Total FLOPs
+  --------------- -------- -------- -------------- --------------
+  odStream             100        0   153844849936 15384484993600
+  frStream             496        0     2837404864  1407352812544
+  lprStream           1050        0    14697619456 15432500428800
+  capStream             46        0   435542443635 20034952407210
+  krStream            1546        0            n/a            n/a
+  udpStream           1592        0            n/a            n/a
+
+  Total FLOPs:        52259290642154
+======================================================================
