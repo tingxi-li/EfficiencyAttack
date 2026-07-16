@@ -32,9 +32,35 @@ class krStream(Process):
         self.stop_event = Event()
         self.device = device         
         
-    def set_config(self, embedding_path, profile_save_path = None):
+    def set_config(self, embedding_path, profile_save_path=None, batch_size=1, buffer_limit=None):
         self.embedding_path = embedding_path
         self.profile_save_path = profile_save_path + f"/{self.__class__.__name__}"
+        self.batch_size = batch_size
+        self.buffer_limit = buffer_limit
+        self.drop_count = 0
+        self.per_image_log = {}
+
+    def _drain_queue(self, queue, max_items):
+        items = []
+        sentinel = False
+        for _ in range(max_items):
+            try:
+                data = queue.get(block=False)
+                if data is None:
+                    sentinel = True
+                    break
+                items.append(data)
+            except Empty:
+                break
+        return items, sentinel
+
+    def _buffered_put(self, queue, item):
+        if self.buffer_limit is not None and queue.qsize() >= self.buffer_limit:
+            self.drop_count += 1
+            return
+        while queue.full():
+            time.sleep(0.01)
+        queue.put(item)
 
     def shutdown(self):
         while self.kr2lm_queue.full():
@@ -111,33 +137,43 @@ class krStream(Process):
                     break
 
                 if not fr_end_received:
-                    try:
-                        data = self.fr2kr_queue.get(block=False)
-                        if data is None:  # End signal
-                            fr_end_received = True
-                            # self.fr2kr_queue.join_thread()
-                            logger.info(f"{self.__class__.__name__:<12} : Received end signal from FR")
-                        else:
-                            self.process_fr_data(data)
-                            self.count += 1
-                            del data
-                    except Empty:
-                        pass
-                    
+                    fr_items, fr_sentinel = self._drain_queue(self.fr2kr_queue, self.batch_size)
+                    if fr_sentinel:
+                        fr_end_received = True
+                        logger.info(f"{self.__class__.__name__:<12} : Received end signal from FR")
+                    for tagged_item in fr_items:
+                        img_id, data = tagged_item
+                        item_start = time.perf_counter()
+                        result = self.process_fr_data(data)
+                        if result is not None:
+                            self._buffered_put(self.kr2lm_queue, (img_id, result))
+                        item_end = time.perf_counter()
+                        if img_id not in self.per_image_log:
+                            self.per_image_log[img_id] = {"start": item_start, "end": item_end, "count": 0}
+                        self.per_image_log[img_id]["end"] = item_end
+                        self.per_image_log[img_id]["count"] += 1
+                        self.count += 1
+                        del tagged_item, data
+
                 if not lpr_end_received:
-                    try:
-                        data = self.lpr2kr_queue.get(block=False)
-                        if data is None:  # End signal
-                            lpr_end_received = True
-                            # self.lpr2kr_queue.join_thread()
-                            logger.info(f"{self.__class__.__name__:<12} : Received end signal from LPR")
-                        else:
-                            self.process_lpr_data(data)
-                            self.count += 1
-                            del data
-                    except Empty:
-                        pass
-                
+                    lpr_items, lpr_sentinel = self._drain_queue(self.lpr2kr_queue, self.batch_size)
+                    if lpr_sentinel:
+                        lpr_end_received = True
+                        logger.info(f"{self.__class__.__name__:<12} : Received end signal from LPR")
+                    for tagged_item in lpr_items:
+                        img_id, data = tagged_item
+                        item_start = time.perf_counter()
+                        result = self.process_lpr_data(data)
+                        if result is not None:
+                            self._buffered_put(self.kr2lm_queue, (img_id, result))
+                        item_end = time.perf_counter()
+                        if img_id not in self.per_image_log:
+                            self.per_image_log[img_id] = {"start": item_start, "end": item_end, "count": 0}
+                        self.per_image_log[img_id]["end"] = item_end
+                        self.per_image_log[img_id]["count"] += 1
+                        self.count += 1
+                        del tagged_item, data
+
                 torch.cuda.empty_cache()
                 gc.collect()
                 
@@ -154,9 +190,11 @@ class krStream(Process):
             self.power = pynvml.nvmlDeviceGetPowerUsage(self.handle)
             self.energy = ( self.power * self.time_elapsed ) / (1e6)
             content = {
-                "count" : self.count,
-                "time" : self.time_elapsed,
-                "energy" : self.energy
+                "count": self.count,
+                "time": self.time_elapsed,
+                "energy": self.energy,
+                "drop_count": self.drop_count,
+                "per_image": {str(k): v for k, v in self.per_image_log.items()}
             }
             with open(self.profile_save_path + ".json", "w") as f:
                 json.dump(content, f, indent=4)
@@ -184,30 +222,23 @@ class krStream(Process):
         with torch.no_grad():
             best_match, similarity = self.find_most_similar(data)
             result_string = f"{best_match}|{float(similarity):.4f}"
-            
-            while self.kr2lm_queue.full():
-                time.sleep(0.01)
-            self.kr2lm_queue.put(result_string)
-            
+
             # Clean up
-            del data, best_match, similarity, result_string
+            del best_match, similarity
             torch.cuda.empty_cache()
             gc.collect()
-    
+            return result_string
+
     
     def process_lpr_data(self, data):
         """Process license plate recognition data"""
         with torch.no_grad():
             query_result = self.db_query(data)
-            
-            while self.kr2lm_queue.full():
-                time.sleep(0.01)
-            self.kr2lm_queue.put(query_result)
-            
+
             # Clean up
-            del query_result
             torch.cuda.empty_cache()
             gc.collect()
+            return query_result
         
         
     def find_most_similar(self, current_embedding):

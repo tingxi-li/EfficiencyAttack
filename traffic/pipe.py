@@ -29,6 +29,24 @@ parser.add_argument("--ps_path", type=str, default="./profile", help="Path to sa
 parser.add_argument("--eval_size", type=int, default=100, help="num of images to evaluate")
 parser.add_argument("--profiling", action="store_true", help="use internal pytorch profiler")
 parser.add_argument("--watch", type=float, default=1.0, help="use internal pytorch profiler")
+parser.add_argument("--batch_size", type=int, default=1, help="batch size for each module")
+parser.add_argument("--conf_filter", type=float, default=None, help="secondary confidence filter for OD output")
+parser.add_argument("--buffer_limit", type=int, default=None, help="max queue size before tail-drop")
+parser.add_argument("--input_defense", type=str, default="none",
+                    choices=["none", "gaussian", "smoothing", "svm"], help="input-level defense at producer")
+parser.add_argument("--svm_path", type=str, default="svm_defense.joblib", help="SVM defense joblib path")
+parser.add_argument("--mix_mode", action="store_true", help="mix clean and attacked images")
+parser.add_argument("--clean_path", type=str, default="../saved/clean_pool", help="clean pool dir for mix mode")
+parser.add_argument("--attack_path", type=str, default="../saved/model_0/teaspoon_tgt_2",
+                    help="attack pool dir for mix mode")
+parser.add_argument("--mix_ratio", type=float, default=0.0, help="fraction of attacked images in the mix (0..1)")
+parser.add_argument("--shuffle_seed", type=int, default=0, help="seed for the mix shuffle ordering")
+parser.add_argument("--eval_index_start", type=int, default=50,
+                    help="skip first N images of each pool to avoid SVM training contamination")
+parser.add_argument("--clean_eval_index_start", type=int, default=None,
+                    help="override eval_index_start for the clean pool (default: same as eval_index_start)")
+parser.add_argument("--attack_eval_index_start", type=int, default=None,
+                    help="override eval_index_start for the attack pool (default: same as eval_index_start)")
 args = parser.parse_args()
 
 if args.target_idx:
@@ -43,7 +61,11 @@ eval_size = args.eval_size
 profiling = args.profiling
 watch_interval = args.watch
 
-if algorithm == "clean":
+if args.mix_mode:
+    # mix mode: --ps_path is used directly (driver controls layout)
+    ps_path = args.ps_path
+    input_dir = None  # not used; producer reads clean_path + attack_path
+elif algorithm == "clean":
     input_dir = "../saved/clean"
     ps_path = os.path.join(args.ps_path, "clean")
 elif algorithm is None:
@@ -65,6 +87,156 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
             
+def generate_summary(ps_path, start_time, end_time, eval_size):
+    """Generate profiling summary from component JSON files."""
+    components = ["odStream", "frStream", "lprStream", "capStream", "krStream", "udpStream"]
+    component_data = {}
+    for comp in components:
+        json_path = os.path.join(ps_path, f"{comp}.json")
+        if os.path.exists(json_path):
+            with open(json_path) as f:
+                component_data[comp] = json.load(f)
+
+    img_json = os.path.join(ps_path, "imgStream.json")
+    img_data = {}
+    if os.path.exists(img_json):
+        with open(img_json) as f:
+            img_data = json.load(f)
+
+    total_wall_time = end_time - start_time
+    throughput = eval_size / total_wall_time if total_wall_time > 0 else 0
+
+    # Compute per-image end-to-end latency
+    # Collect all per_image logs from all components, find min start and max end per image_id
+    image_latencies = {}
+    for comp, data in component_data.items():
+        per_image = data.get("per_image", {})
+        for img_id_str, timing in per_image.items():
+            img_id = str(img_id_str)
+            if img_id not in image_latencies:
+                image_latencies[img_id] = {"start": timing["start"], "end": timing["end"]}
+            else:
+                image_latencies[img_id]["start"] = min(image_latencies[img_id]["start"], timing["start"])
+                image_latencies[img_id]["end"] = max(image_latencies[img_id]["end"], timing["end"])
+
+    per_image_e2e = {}
+    for img_id, times in image_latencies.items():
+        per_image_e2e[img_id] = times["end"] - times["start"]
+
+    latencies = list(per_image_e2e.values())
+    avg_latency = sum(latencies) / len(latencies) if latencies else 0
+    max_latency = max(latencies) if latencies else 0
+    min_latency = min(latencies) if latencies else 0
+
+    def _pct(values, q):
+        if not values:
+            return 0.0
+        s = sorted(values)
+        if len(s) == 1:
+            return float(s[0])
+        idx = (len(s) - 1) * q
+        lo = int(idx)
+        hi = min(lo + 1, len(s) - 1)
+        frac = idx - lo
+        return float(s[lo] * (1 - frac) + s[hi] * frac)
+
+    p50 = _pct(latencies, 0.50)
+    p95 = _pct(latencies, 0.95)
+    p99 = _pct(latencies, 0.99)
+
+    # FLOPs summary
+    flops_components = ["odStream", "frStream", "lprStream", "capStream"]
+    flops_summary = {}
+    total_flops = 0
+    for comp in flops_components:
+        if comp in component_data:
+            comp_flops = component_data[comp].get("total_flops", 0)
+            flops_summary[comp] = {
+                "flops_per_call": component_data[comp].get("flops_per_call", 0),
+                "total_flops": comp_flops,
+                "count": component_data[comp].get("count", 0)
+            }
+            total_flops += comp_flops
+
+    # Workload counts and drops
+    workload_summary = {}
+    for comp in components:
+        if comp in component_data:
+            workload_summary[comp] = {
+                "count": component_data[comp].get("count", 0),
+                "drop_count": component_data[comp].get("drop_count", 0),
+                "time": component_data[comp].get("time", 0)
+            }
+
+    total_drops = sum(workload_summary.get(c, {}).get("drop_count", 0) for c in components)
+    total_drops += int(img_data.get("drop_count", 0))
+    total_drops += int(img_data.get("input_drop_total", 0))
+
+    summary = {
+        "pipeline": {
+            "total_wall_time": total_wall_time,
+            "eval_size": eval_size,
+            "throughput_img_per_sec": throughput
+        },
+        "per_image_latency": {
+            "avg": avg_latency,
+            "min": min_latency,
+            "max": max_latency,
+            "p50": p50,
+            "p95": p95,
+            "p99": p99,
+            "per_image": per_image_e2e
+        },
+        "flops": {
+            "components": flops_summary,
+            "total_flops": total_flops
+        },
+        "workload": workload_summary,
+        "input_defense": {
+            "name": img_data.get("input_defense"),
+            "input_drop_total": img_data.get("input_drop_total", 0),
+            "input_drop_clean": img_data.get("input_drop_clean", 0),
+            "input_drop_attack": img_data.get("input_drop_attack", 0),
+        },
+        "mix": {
+            "mode": img_data.get("mix_mode", False),
+            "ratio": img_data.get("mix_ratio"),
+            "shuffle_seed": img_data.get("shuffle_seed"),
+            "source_labels": img_data.get("source_labels", {}),
+        },
+        "drops_total": total_drops,
+    }
+
+    summary_path = os.path.join(ps_path, "SUMMARY.json")
+    with open(summary_path, "w") as f:
+        json.dump(summary, f, indent=4)
+
+    # Print summary table
+    print("\n" + "=" * 70)
+    print("PROFILING SUMMARY")
+    print("=" * 70)
+    print(f"  Total wall time:    {total_wall_time:.2f}s")
+    print(f"  Images processed:   {eval_size}")
+    print(f"  Throughput:         {throughput:.4f} img/s")
+    print(f"  Avg E2E latency:    {avg_latency:.4f}s")
+    print(f"  Min E2E latency:    {min_latency:.4f}s")
+    print(f"  Max E2E latency:    {max_latency:.4f}s")
+    print()
+    print(f"  {'Component':<15} {'Count':>8} {'Dropped':>8} {'FLOPs/call':>14} {'Total FLOPs':>14}")
+    print(f"  {'-'*15} {'-'*8} {'-'*8} {'-'*14} {'-'*14}")
+    for comp in components:
+        count = workload_summary.get(comp, {}).get("count", 0)
+        drops = workload_summary.get(comp, {}).get("drop_count", 0)
+        fpc = flops_summary.get(comp, {}).get("flops_per_call", "-")
+        tf = flops_summary.get(comp, {}).get("total_flops", "-")
+        fpc_str = f"{fpc:>14.0f}" if isinstance(fpc, (int, float)) and fpc else f"{'n/a':>14}"
+        tf_str = f"{tf:>14.0f}" if isinstance(tf, (int, float)) and tf else f"{'n/a':>14}"
+        print(f"  {comp:<15} {count:>8.0f} {drops:>8.0f} {fpc_str} {tf_str}")
+    print(f"\n  Total FLOPs:        {total_flops:.0f}")
+    print("=" * 70)
+    logger.info(f"Summary written to {summary_path}")
+
+
 if __name__ == "__main__":
     date_time = time.strftime("%Y-%m-%d %H:%M:%S")
     
@@ -123,14 +295,30 @@ if __name__ == "__main__":
     kr_stream = krStream(fr2kr_queue, lpr2kr_queue, kr2udp_queue, device)
     udp_Stream = udpStream(cap2udp_queue, kr2udp_queue, device)
     
-    img_stream.set_config(src_folder_path = input_dir, fps = 30, profile_save_path=ps_path, eval_size=eval_size)
-    # od_stream.set_config(model_id=model_id, profile_save_path=ps_path)
-    od_stream.set_config(model_id=0, profile_save_path=ps_path)
-    fr_stream.set_config(profile_save_path=ps_path)
-    lpr_stream.set_config(profile_save_path=ps_path)
-    cap_stream.set_config(profile_save_path=ps_path)
-    kr_stream.set_config(embedding_path="./face_embeddings", profile_save_path=ps_path)
-    udp_Stream.set_config(profile_save_path=ps_path)
+    input_defense_kwargs = {}
+    if args.input_defense == "svm":
+        input_defense_kwargs["model_path"] = args.svm_path
+    clean_eval_start = args.clean_eval_index_start if args.clean_eval_index_start is not None else args.eval_index_start
+    attack_eval_start = args.attack_eval_index_start if args.attack_eval_index_start is not None else args.eval_index_start
+    img_stream.set_config(
+        src_folder_path=input_dir, fps=30, profile_save_path=ps_path,
+        eval_size=eval_size, buffer_limit=args.buffer_limit,
+        input_defense_name=args.input_defense,
+        input_defense_kwargs=input_defense_kwargs,
+        mix_mode=args.mix_mode,
+        clean_path=args.clean_path,
+        attack_path=args.attack_path,
+        mix_ratio=args.mix_ratio,
+        shuffle_seed=args.shuffle_seed,
+        clean_eval_index_start=clean_eval_start,
+        attack_eval_index_start=attack_eval_start,
+    )
+    od_stream.set_config(model_id=0, profile_save_path=ps_path, batch_size=args.batch_size, conf_filter=args.conf_filter, buffer_limit=args.buffer_limit)
+    fr_stream.set_config(profile_save_path=ps_path, batch_size=args.batch_size, buffer_limit=args.buffer_limit)
+    lpr_stream.set_config(profile_save_path=ps_path, batch_size=args.batch_size, buffer_limit=args.buffer_limit)
+    cap_stream.set_config(profile_save_path=ps_path, batch_size=args.batch_size, buffer_limit=args.buffer_limit)
+    kr_stream.set_config(embedding_path="./face_embeddings", profile_save_path=ps_path, batch_size=args.batch_size, buffer_limit=args.buffer_limit)
+    udp_Stream.set_config(profile_save_path=ps_path, batch_size=args.batch_size)
 
     
     processes = [img_stream, od_stream, fr_stream, lpr_stream, cap_stream, kr_stream, udp_Stream]
@@ -165,10 +353,10 @@ if __name__ == "__main__":
         logger.info("Cleaned up resources in MAIN process")
         
     end_time = time.perf_counter()
-    
-    # summary(ps_path, start_time, end_time)
-    
+
+    # Generate profiling summary
+    generate_summary(ps_path, start_time, end_time, eval_size)
+
     time.sleep(5)
-    # torch.cuda.synchronize()
     time.sleep(5)
     torch.cuda.empty_cache()

@@ -14,7 +14,7 @@ from PIL import Image
 sys.path.append("../")
 from legacy_flops import FLOPs_DECORATOR, write_profile, write_profile_lt
 # from model import create_model # https://github.com/dbpprt/pytorch-licenseplate-segmentation/tree/master
-from fast_plate_ocr import ONNXPlateRecognizer # https://github.com/ankandrew/fast-plate-ocr
+from fast_plate_ocr import LicensePlateRecognizer as ONNXPlateRecognizer # https://github.com/ankandrew/fast-plate-ocr
 import onnxruntime as ort
 import gc
 
@@ -40,9 +40,36 @@ class lprStream(Process):
         self.device = device         
         self.model_id = None
         
-    def set_config(self, model_id="cmpnt/model_v2.pth", profile_save_path = None):
+    def set_config(self, model_id="model_v2.pth", profile_save_path=None, batch_size=1, buffer_limit=None):
         self.model_id = model_id
         self.profile_save_path = profile_save_path + f"/{self.__class__.__name__}"
+        self.batch_size = batch_size
+        self.buffer_limit = buffer_limit
+        self.drop_count = 0
+        self.per_image_log = {}
+        self.flops_per_call = 0
+
+    def _drain_queue(self, queue, max_items):
+        items = []
+        sentinel = False
+        for _ in range(max_items):
+            try:
+                data = queue.get(block=False)
+                if data is None:
+                    sentinel = True
+                    break
+                items.append(data)
+            except Empty:
+                break
+        return items, sentinel
+
+    def _buffered_put(self, queue, item):
+        if self.buffer_limit is not None and queue.qsize() >= self.buffer_limit:
+            self.drop_count += 1
+            return
+        while queue.full():
+            time.sleep(0.01)
+        queue.put(item)
 
     def shutdown(self):
         while self.lpr2kr_queue.full():
@@ -123,36 +150,52 @@ class lprStream(Process):
             logger.info(f"{self.__class__.__name__:<12} : LPR model loaded, model_id = {self.model_id}")
             logger.info(f"{self.__class__.__name__:<12} : started")
             while not self.stop_event.is_set():
-                try:                    
-                    data = self.od2lpr_queue.get(block=False)
-                    if data is None:
-                        # self.od2lpr_queue.join_thread()
-                        break
-                    
-                    
-                    data_tensor = torch.from_numpy(data).to(self.device)
-                    
-                    # Run the segmentation model
-                    with torch.no_grad():
-                        # print(f"+ "*20 + f"1 {type(data_tensor)}")
-                        pred = self.segmentation(data_tensor, self.deeplabv3)
-                        # print(f"+ "*20 + f"2 {type(pred)}")
-                        plate_tensor = self.post_process(pred, data_tensor.detach().clone())
-                        # print(f"+ "*20 + f"3 {type(plate_tensor)}")
-                        plate_text = self.ocr(plate_tensor)[0]
-                        
-                        
-                    # Send the result to the next queue
-                    while self.lpr2kr_queue.full():
-                        time.sleep(0.01)
-                    self.lpr2kr_queue.put(plate_text)
-                    self.count += 1
-                    torch.cuda.empty_cache()
-                
-                except Empty:
-                    continue
-                
-                del data, data_tensor, pred, plate_tensor, plate_text
+                items, sentinel = self._drain_queue(self.od2lpr_queue, self.batch_size)
+
+                if sentinel and len(items) == 0:
+                    break
+
+                for tagged_item in items:
+                    try:
+                        img_id, data = tagged_item
+                        data_tensor = torch.from_numpy(data).to(self.device)
+
+                        item_start = time.perf_counter()
+
+                        with torch.no_grad():
+                            if self.flops_per_call == 0:
+                                from torch.profiler import profile, ProfilerActivity
+                                with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA], with_flops=True) as prof:
+                                    pred = self.segmentation(data_tensor, self.deeplabv3)
+                                for evt in prof.key_averages():
+                                    self.flops_per_call += evt.flops
+                            else:
+                                pred = self.segmentation(data_tensor, self.deeplabv3)
+
+                            plate_tensor = self.post_process(pred, data_tensor.detach().clone())
+                            plate_result = self.ocr(plate_tensor)[0]
+                            plate_text = plate_result.plate if hasattr(plate_result, 'plate') else str(plate_result)
+
+                        item_end = time.perf_counter()
+
+                        if img_id not in self.per_image_log:
+                            self.per_image_log[img_id] = {"start": item_start, "end": item_end, "count": 0}
+                        self.per_image_log[img_id]["end"] = item_end
+                        self.per_image_log[img_id]["count"] += 1
+
+                        self._buffered_put(self.lpr2kr_queue, (img_id, plate_text))
+                        self.count += 1
+                        torch.cuda.empty_cache()
+
+                    except Exception as e:
+                        logger.warning(f"{self.__class__.__name__:<12} : error processing item: {str(e)}")
+                        self.count += 1
+                        continue
+
+                    del data, data_tensor, pred, plate_tensor, plate_text
+
+                if sentinel:
+                    break
                 
         except Exception as e:
             logger.error(f"{self.__class__.__name__:<12} : {str(e)}")
@@ -165,9 +208,13 @@ class lprStream(Process):
             self.power = pynvml.nvmlDeviceGetPowerUsage(self.handle)
             self.energy = ( self.power * self.time_elapsed ) / (1e6)
             content = {
-                "count" : self.count,
-                "time" : self.time_elapsed,
-                "energy" : self.energy
+                "count": self.count,
+                "time": self.time_elapsed,
+                "energy": self.energy,
+                "drop_count": self.drop_count,
+                "flops_per_call": self.flops_per_call,
+                "total_flops": self.flops_per_call * int(self.count),
+                "per_image": {str(k): v for k, v in self.per_image_log.items()}
             }
             with open(self.profile_save_path + ".json", "w") as f:
                 json.dump(content, f, indent=4)

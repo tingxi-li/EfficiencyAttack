@@ -33,9 +33,36 @@ class frStream(Process):
         self.stop_event = Event()
         self.device = device 
         
-    def set_config(self, model_id="vggface2", profile_save_path = None):
+    def set_config(self, model_id="vggface2", profile_save_path=None, batch_size=1, buffer_limit=None):
         self.model_id = model_id
         self.profile_save_path = profile_save_path + f"/{self.__class__.__name__}"
+        self.batch_size = batch_size
+        self.buffer_limit = buffer_limit
+        self.drop_count = 0
+        self.per_image_log = {}
+        self.flops_per_call = 0
+
+    def _drain_queue(self, queue, max_items):
+        items = []
+        sentinel = False
+        for _ in range(max_items):
+            try:
+                data = queue.get(block=False)
+                if data is None:
+                    sentinel = True
+                    break
+                items.append(data)
+            except Empty:
+                break
+        return items, sentinel
+
+    def _buffered_put(self, queue, item):
+        if self.buffer_limit is not None and queue.qsize() >= self.buffer_limit:
+            self.drop_count += 1
+            return
+        while queue.full():
+            time.sleep(0.01)
+        queue.put(item)
 
     def enable_profile(self, flag):
         self.flag = flag
@@ -79,31 +106,50 @@ class frStream(Process):
             logger.info(f"{self.__class__.__name__:<12} : FR model loaded, model_id = {self.model_id}")
             logger.info(f"{self.__class__.__name__:<12} : started")
             while not self.stop_event.is_set():
-                # Get next image with timeout
-                try:
-                    data = self.od2fr_queue.get(block=False)
-                    if data is None:  # End signal
-                        # self.od2fr_queue.join_thread()
-                        break
-                except Empty:
-                    continue
-                
-                # Process the image
-                data_tensor = torch.from_numpy(data).to(self.device)
-                padded_image = self.facenet_padding(data_tensor)
-                
-                with torch.no_grad():
-                    face_embedding = self.facenet(padded_image).cpu().numpy()
-                    
-                while self.fr2kr_queue.full():
-                    time.sleep(0.01)
-                self.fr2kr_queue.put(face_embedding)
-                self.count += 1
-                
-                torch.cuda.empty_cache()
-                gc.collect()
-                
-                del data, data_tensor, padded_image, face_embedding
+                items, sentinel = self._drain_queue(self.od2fr_queue, self.batch_size)
+
+                if sentinel and len(items) == 0:
+                    break
+
+                for tagged_item in items:
+                    img_id, data = tagged_item
+                    data_tensor = torch.from_numpy(data).to(self.device)
+
+                    item_start = time.perf_counter()
+
+                    with torch.no_grad():
+                        if data_tensor.dim() == 3:
+                            data_tensor = data_tensor.unsqueeze(0)
+
+                        padded_image = torch.nn.functional.interpolate(
+                            data_tensor, size=(160, 160), mode='bilinear', align_corners=False
+                        )
+
+                        if self.flops_per_call == 0:
+                            from torch.profiler import profile, ProfilerActivity
+                            with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA], with_flops=True) as prof:
+                                face_embedding = self.facenet(padded_image).cpu().numpy()
+                            for evt in prof.key_averages():
+                                self.flops_per_call += evt.flops
+                        else:
+                            face_embedding = self.facenet(padded_image).cpu().numpy()
+
+                    item_end = time.perf_counter()
+
+                    if img_id not in self.per_image_log:
+                        self.per_image_log[img_id] = {"start": item_start, "end": item_end, "count": 0}
+                    self.per_image_log[img_id]["end"] = item_end
+                    self.per_image_log[img_id]["count"] += 1
+
+                    self._buffered_put(self.fr2kr_queue, (img_id, face_embedding))
+                    self.count += 1
+
+                    del data, data_tensor, padded_image, face_embedding
+                    torch.cuda.empty_cache()
+                    gc.collect()
+
+                if sentinel:
+                    break
         
         except Exception as e:
             logger.error(f"{self.__class__.__name__:<12} : {str(e)}")
@@ -116,9 +162,13 @@ class frStream(Process):
             self.power = pynvml.nvmlDeviceGetPowerUsage(self.handle)
             self.energy = ( self.power * self.time_elapsed ) / (1e6)
             content = {
-                "count" : self.count,
-                "time" : self.time_elapsed,
-                "energy" : self.energy
+                "count": self.count,
+                "time": self.time_elapsed,
+                "energy": self.energy,
+                "drop_count": self.drop_count,
+                "flops_per_call": self.flops_per_call,
+                "total_flops": self.flops_per_call * int(self.count),
+                "per_image": {str(k): v for k, v in self.per_image_log.items()}
             }
             with open(self.profile_save_path + ".json", "w") as f:
                 json.dump(content, f, indent=4)

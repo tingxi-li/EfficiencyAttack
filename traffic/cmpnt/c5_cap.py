@@ -37,9 +37,36 @@ class capStream(Process):
         self.device = device         
         self.model_id = None
     
-    def set_config(self, model_id="microsoft/git-base", profile_save_path = None):
+    def set_config(self, model_id="microsoft/git-base", profile_save_path=None, batch_size=1, buffer_limit=None):
         self.model_id = model_id
         self.profile_save_path = profile_save_path + f"/{self.__class__.__name__}"
+        self.batch_size = batch_size
+        self.buffer_limit = buffer_limit
+        self.drop_count = 0
+        self.per_image_log = {}
+        self.flops_per_call = 0
+
+    def _drain_queue(self, queue, max_items):
+        items = []
+        sentinel = False
+        for _ in range(max_items):
+            try:
+                data = queue.get(block=False)
+                if data is None:
+                    sentinel = True
+                    break
+                items.append(data)
+            except Empty:
+                break
+        return items, sentinel
+
+    def _buffered_put(self, queue, item):
+        if self.buffer_limit is not None and queue.qsize() >= self.buffer_limit:
+            self.drop_count += 1
+            return
+        while queue.full():
+            time.sleep(0.01)
+        queue.put(item)
 
     def enable_profile(self, flag):
         self.flag = flag
@@ -91,28 +118,46 @@ class capStream(Process):
             logger.info(f"{self.__class__.__name__:<12} : started")
             
             while not self.stop_event.is_set():
-                try:
-                    data = self.od2cap_queue.get(block=False)
-                    if data is None:  # End signal
-                        # self.od2cap_queue.join_thread()
-                        break
-                    
-                    data_tensor = torch.from_numpy(data).to(self.device)
-                    
+                items, sentinel = self._drain_queue(self.od2cap_queue, self.batch_size)
+
+                if sentinel and len(items) == 0:
+                    break
+
+                for tagged_item in items:
+                    img_id, data = tagged_item
+                    if isinstance(data, np.ndarray):
+                        data_tensor = torch.from_numpy(data).to(self.device)
+                    elif isinstance(data, torch.Tensor):
+                        data_tensor = data.to(self.device)
+
+                    item_start = time.perf_counter()
+
                     with torch.no_grad():
-                        caption = self.inference(data_tensor)
-                        
-                    while self.cap2lm_queue.full():
-                        time.sleep(0.01)
-                    self.cap2lm_queue.put(caption)
+                        if self.flops_per_call == 0:
+                            from torch.profiler import profile, ProfilerActivity
+                            with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA], with_flops=True) as prof:
+                                caption = self.inference(data_tensor)
+                            for evt in prof.key_averages():
+                                self.flops_per_call += evt.flops
+                        else:
+                            caption = self.inference(data_tensor)
+
+                    item_end = time.perf_counter()
+
+                    if img_id not in self.per_image_log:
+                        self.per_image_log[img_id] = {"start": item_start, "end": item_end, "count": 0}
+                    self.per_image_log[img_id]["end"] = item_end
+                    self.per_image_log[img_id]["count"] += 1
+
+                    self._buffered_put(self.cap2lm_queue, (img_id, caption))
                     self.count += 1
-                    
+
+                    del data, data_tensor, caption
                     torch.cuda.empty_cache()
                     gc.collect()
-                except Empty:
-                    continue
-                
-                del data, data_tensor, caption
+
+                if sentinel:
+                    break
                 
         except Exception as e:
             logger.error(f"{self.__class__.__name__:<12} : {str(e)}")
@@ -125,9 +170,13 @@ class capStream(Process):
             self.power = pynvml.nvmlDeviceGetPowerUsage(self.handle)
             self.energy = ( self.power * self.time_elapsed ) / (1e6)
             content = {
-                "count" : self.count,
-                "time" : self.time_elapsed,
-                "energy" : self.energy
+                "count": self.count,
+                "time": self.time_elapsed,
+                "energy": self.energy,
+                "drop_count": self.drop_count,
+                "flops_per_call": self.flops_per_call,
+                "total_flops": self.flops_per_call * int(self.count),
+                "per_image": {str(k): v for k, v in self.per_image_log.items()}
             }
             with open(self.profile_save_path + ".json", "w") as f:
                 json.dump(content, f, indent=4)

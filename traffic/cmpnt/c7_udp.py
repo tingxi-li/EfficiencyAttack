@@ -33,10 +33,26 @@ class udpStream(Process):
         self.stop_event = Event()
         self.device = device         
         
-    def set_config(self, model_id="gpt2", profile_save_path = None):
+    def set_config(self, model_id="gpt2", profile_save_path=None, batch_size=1):
         self.model_id = model_id
         self.profile_save_path = profile_save_path + f"/{self.__class__.__name__}"
-        
+        self.batch_size = batch_size
+        self.per_image_log = {}
+
+    def _drain_queue(self, queue, max_items):
+        items = []
+        sentinel = False
+        for _ in range(max_items):
+            try:
+                data = queue.get(block=False)
+                if data is None:
+                    sentinel = True
+                    break
+                items.append(data)
+            except Empty:
+                break
+        return items, sentinel
+
     def shutdown(self):
         self.stop_event.set()
         try:
@@ -117,37 +133,38 @@ class udpStream(Process):
                     break
 
                 if not cap_end_received:
-                    try:
-                        data = self.cap2lm_queue.get(block=False)
-                        if data is None:
-                            cap_end_received = True
-                            # self.cap2lm_queue.join_thread()
-                            logger.info(f"{self.__class__.__name__:<12} : Received end signal from CAP")
-                        else:
-                            # self.gpt2(data, max_new_tokens=50)
-                            self.send_message_udp(data)
-                            self.count += 1
-                            del data
-                    except Empty:
-                        time.sleep(0.1)
-                        pass
-                    
+                    cap_items, cap_sentinel = self._drain_queue(self.cap2lm_queue, self.batch_size)
+                    if cap_sentinel:
+                        cap_end_received = True
+                        logger.info(f"{self.__class__.__name__:<12} : Received end signal from CAP")
+                    for tagged_item in cap_items:
+                        img_id, data = tagged_item
+                        item_start = time.perf_counter()
+                        self.send_message_udp(data)
+                        item_end = time.perf_counter()
+                        if img_id not in self.per_image_log:
+                            self.per_image_log[img_id] = {"start": item_start, "end": item_end, "count": 0}
+                        self.per_image_log[img_id]["end"] = item_end
+                        self.per_image_log[img_id]["count"] += 1
+                        self.count += 1
+                        del tagged_item, data
+
                 if not kr_end_received:
-                    try:
-                        data = self.kr2lm_queue.get(block=False)
-                        if data is None:
-                            kr_end_received = True
-                            # self.kr2lm_queue.join_thread()
-                            logger.info(f"{self.__class__.__name__:<12} : Received end signal from KR")
-                        else:
-                            # self.gpt2(data, max_new_tokens=50)
-                            self.send_message_udp(data)
-                            self.count += 1
-                            del data
-                    except Empty:
-                        time.sleep(0.1)
-                        pass
-                    
+                    kr_items, kr_sentinel = self._drain_queue(self.kr2lm_queue, self.batch_size)
+                    if kr_sentinel:
+                        kr_end_received = True
+                        logger.info(f"{self.__class__.__name__:<12} : Received end signal from KR")
+                    for tagged_item in kr_items:
+                        img_id, data = tagged_item
+                        item_start = time.perf_counter()
+                        self.send_message_udp(data)
+                        item_end = time.perf_counter()
+                        if img_id not in self.per_image_log:
+                            self.per_image_log[img_id] = {"start": item_start, "end": item_end, "count": 0}
+                        self.per_image_log[img_id]["end"] = item_end
+                        self.per_image_log[img_id]["count"] += 1
+                        self.count += 1
+                        del tagged_item, data
 
                 torch.cuda.empty_cache()
                 gc.collect()
@@ -163,9 +180,10 @@ class udpStream(Process):
             self.power = pynvml.nvmlDeviceGetPowerUsage(self.handle)
             self.energy = ( self.power * self.time_elapsed ) / (1e6)
             content = {
-                "count" : self.count,
-                "time" : self.time_elapsed,
-                "energy" : self.energy
+                "count": self.count,
+                "time": self.time_elapsed,
+                "energy": self.energy,
+                "per_image": {str(k): v for k, v in self.per_image_log.items()}
             }
             with open(self.profile_save_path + ".json", "w") as f:
                 json.dump(content, f, indent=4)
